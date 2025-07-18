@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <title>Redireccionando...</title>
   <script type="text/javascript">
-    // Extrae la ruta original después de /React2025
-    const redirectTo = window.location.pathname.replace(/\/React2025/, '');
-    // Guarda la ruta en sessionStorage
-    sessionStorage.redirect = redirectTo;
-    // Redirige a la raíz de la app
-    window.location.href = '/React2025/';
+
+    const fullPath = window.location.pathname + window.location.search + window.location.hash;
+
+    sessionStorage.redirect = fullPath;
+
+    window.location.replace("/React2025/");
   </script>
 </head>
 <body>
