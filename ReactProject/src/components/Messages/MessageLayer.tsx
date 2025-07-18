@@ -1,0 +1,56 @@
+
+import PubSub from '../Pubsub';
+import './MessageLayer.css';
+import { useEffect, useState } from 'react';
+
+const zindex = 3;
+
+const MessageLayer = () => {
+
+    const [islayerVisible, setLayerVisible] = useState(false);
+    const [message, setLayerMessage] = useState("");
+    const [zIndex, setZIndex]  = useState(zindex);
+
+    let subscriptions: (() => void)[];
+    const initSubscriptions = () => {
+        subscriptions = [
+            PubSub.subscribe<string>('MSG_INFO', (msg) => {
+                setLayerVisible(true);
+                setLayerMessage(msg);
+                setZIndex(zindex);
+                setTimeout(() => {
+                    setLayerVisible(false);
+                    setZIndex(0);
+                }, 1500);
+            }),
+            PubSub.subscribe('MSG_SHOW_LAYER', (msg = '') => {
+                setLayerVisible(true);
+                setLayerMessage(msg);
+                setZIndex(zindex);
+            }),
+            PubSub.subscribe('MSG_HIDE_LAYER', () => {
+                setLayerVisible(false);
+                setLayerMessage('');
+                setZIndex(0);
+            })
+        ];
+    }
+
+
+    useEffect(() => {
+        initSubscriptions();
+        return () => subscriptions.forEach(s => s());
+    });
+
+    return (
+        <>
+            <div className="backdrop" data-visible={islayerVisible ? true : false} style={{zIndex}}></div>
+            <div className="message-wrapper w3-display-middle" data-visible={islayerVisible && message ? true : false}>
+                <p>{message}</p>
+            </div>
+        </>
+    );
+
+};
+
+export default MessageLayer;

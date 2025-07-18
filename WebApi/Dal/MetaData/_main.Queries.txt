@@ -1,0 +1,37 @@
+
+; ===========================================================
+; Dal.Repositories.UsuariosRepository
+; ===========================================================
+#Dal.Repositories.UsuariosRepository.OrderBy%Id ASC
+#Dal.Repositories.UsuariosRepository.Delete%DELETE FROM [Usuario] WHERE Id=@Id
+#Dal.Repositories.UsuariosRepository.Select%SELECT Id, Nif, Nombre, Descripcion, FechaDeAlta FROM [Usuario]
+#Dal.Repositories.UsuariosRepository.Insert%INSERT INTO [Usuario] (Nif, Nombre, Descripcion, FechaDeAlta) VALUES(@Nif, @Nombre, @Descripcion, GETDATE()); SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.UsuariosRepository.Update%UPDATE [Usuario] SET Nif = @Nif, Nombre = @Nombre, Descripcion = @Descripcion WHERE Id=@Id
+
+; ===========================================================
+; Dal.Repositories.ProveedoresRepository
+; ===========================================================
+#Dal.Repositories.ProveedoresRepository.OrderBy%Id ASC
+#Dal.Repositories.ProveedoresRepository.Delete%DELETE FROM [Proveedor] WHERE Id=@Id
+#Dal.Repositories.ProveedoresRepository.Select%SELECT Id, Nif, Nombre, Descripcion, FechaDeAlta FROM [Proveedor]
+#Dal.Repositories.ProveedoresRepository.Insert%INSERT INTO [Proveedor] (Nif, Nombre, Descripcion, FechaDeAlta) VALUES(@Nif, @Nombre, @Descripcion, GETDATE()); SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.ProveedoresRepository.Update%UPDATE [Proveedor] SET Nif = @Nif, Nombre = @Nombre, Descripcion = @Descripcion WHERE Id=@Id
+
+; ===========================================================
+; Dal.Repositories.VehiculosRepository
+; ===========================================================
+#Dal.Repositories.VehiculosRepository.OrderBy%Id ASC
+#Dal.Repositories.VehiculosRepository.Delete%DELETE FROM [Vehiculo] WHERE Id=@Id
+#Dal.Repositories.VehiculosRepository.Select%SELECT Id, Matricula, Marca, Modelo, FechaDeAlta, FechaDeModificacion, Numero, Observaciones FROM [Vehiculo]
+#Dal.Repositories.VehiculosRepository.Insert%INSERT INTO [Vehiculo] (Matricula, Marca, Modelo, FechaDeAlta) VALUES(@Matricula, @Marca, @Modelo, GETDATE()); SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.VehiculosRepository.Update%UPDATE [Vehiculo] SET Matricula = @Matricula, Marca = @Marca, Modelo = @Modelo, FechaDeModificacion = @FechaDeModificacion, Numero = @Numero, Observaciones = @Observaciones WHERE Id=@Id
+#Dal.Repositories.VehiculosRepository.Count%SELECT COUNT(*) FROM [Vehiculo] WHERE Marca = @Marca
+
+; ===========================================================
+; Dal.Repositories.Sqlite.UsuariosRepository
+; ===========================================================
+#Dal.Repositories.Sqlite.UsuariosRepository.OrderBy%Id ASC
+#Dal.Repositories.Sqlite.UsuariosRepository.Delete%DELETE FROM [Usuario] WHERE Id=@Id
+#Dal.Repositories.Sqlite.UsuariosRepository.Select%SELECT id, name, value FROM [Usuario]
+#Dal.Repositories.Sqlite.UsuariosRepository.Insert%INSERT INTO [Usuario] (name, value) VALUES( @name, @value); SELECT last_insert_rowid();
+#Dal.Repositories.Sqlite.UsuariosRepository.Update%UPDATE [Usuario] SET name = @name, value = @value WHERE Id=@Id

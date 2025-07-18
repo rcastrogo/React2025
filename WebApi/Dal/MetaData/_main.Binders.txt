@@ -1,0 +1,49 @@
+ 
+; ===========================================================
+; Negocio.Entities.Usuario
+; ===========================================================
+#Negocio.Entities.Usuario
+ 0, _id                           , Integer
+ 1, _nif                       
+ 2, _nombre                  
+ 3, _descripcion                   
+ 4, _fechaDeAlta                  , datetime
+                      
+; ===========================================================
+; Negocio.Entities.Proveedor
+; ===========================================================
+#Negocio.Entities.Proveedor
+ 0, _id                           , Integer
+ 1, _nif                       
+ 2, _nombre                  
+ 3, _descripcion                   
+ 4, _fechaDeAlta                  , datetime
+
+; ===========================================================
+; Negocio.Entities.Vehiculo
+; ===========================================================
+#Negocio.Entities.Vehiculo
+ 0, _id                           , Integer
+ 1, _matricula                       
+ 2, _marca                  
+ 3, _modelo                   
+ 4, _fechaDeAlta                  , datetime
+ 5, _fechaDeModificacion          , datetime
+ 6, _numero                       , Integer
+ 7, _observaciones
+ 5, _alta                         , true-datetime
+; ===========================================================
+; Negocio.Entities.Sqlite.Usuario
+; ===========================================================
+#Negocio.Entities.Sqlite.Usuario
+ 0, _id                           , Long
+ 1, _nombre                       
+ 2, _valor                        , Long                 
+
+
+; ===========================================================
+; Negocio.Entities.Vehiculo
+; ===========================================================
+#Loader_V0002
+ 0, _id                           , Integer                 
+ 3, _modelo                   

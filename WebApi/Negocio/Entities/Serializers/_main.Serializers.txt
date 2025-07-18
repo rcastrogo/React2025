@@ -1,0 +1,30 @@
+﻿; ===========================================================
+; Usuario
+; ===========================================================
+#Usuario
+Integer,Id,Id#
+String,Nif,Nif#
+String,Nombre,Nomb
+
+#UsuarioSmall
+Integer,Id,i#
+String,Nif,n#
+String,Descripcion,d
+
+#VehiculoXXX@Negocio.Entities.Vehiculo
+Integer,Id,i_xxx#
+String,Matricula,mat_xxx#
+String,Marca,marca_xxx
+
+#Rafa@Negocio.Entities.Proveedor@Entity
+Long,Id,i_long#
+String,Nombre,nom
+
+#Proveedor@Negocio.Entities.Proveedor@Entity
+Long,Id,i_xx#
+String,Nombre,nom_xxx#
+Long,~edad,edad_xxx
+
+#TypeInfo@System.Reflection.TypeInfo@Simple
+int,IsAbstract,a#
+String,FullName,name

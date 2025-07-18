@@ -1,0 +1,134 @@
+#root {
+ 
+}
+
+.main-wrapper{
+  background-color: white;
+  margin-top:39px;
+  height: calc(100% - 39px);
+  top: 0;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  overflow:auto;
+}
+
+.backdrop{
+  background-color: darkslategray;
+  opacity:.70;
+  height: 100%;
+  top: 43px;
+  left: 0;
+  width: 100%;
+  position: fixed;
+  overflow:auto;
+  display:none;
+}
+
+.backdrop[data-visible=true]{
+  display:block;
+}
+
+.message-wrapper {
+    background-color: white;
+    color: black;
+    padding: 15px;
+    border: solid 2px white;
+    border-radius: 12px;
+    display: none;
+    font-weight: normal;
+    box-shadow: black 9px 8px 16px;
+}
+
+.message-wrapper[data-visible=true]{
+  display:block;
+  z-index:4;
+}
+.message-wrapper p{
+  margin: 0;
+  padding:8px;
+}
+
+.loader {
+    top: 39px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(darkRed 0 0) 0 / 0% no-repeat white;
+    border-bottom: 1px solid black;
+    animation: l1 3s infinite linear;
+    position: absolute;
+}
+
+.loader-relative {
+  position: relative;
+  border: solid 1px gray;
+  padding: 4px;
+  background: linear-gradient(red 0 0) 0 / 0% no-repeat white;
+  border: 1px solid black;
+  border-radius:6px;
+  width: 75%;
+  text-align:center;
+  margin: 3px auto;
+}
+
+@keyframes l1 {
+    100% {background-size:100%}
+}
+
+div[data-menu] {
+   right: 2px;
+   margin-top: 2.6em;
+   display:none
+}
+.menu-item-separator{
+  height:1px; 
+  background-color:silver;
+}
+
+.items-per-page{
+  margin:1px;
+  padding:0;
+  min-height:35px;
+  min-width:35px;
+  border:solid 1px gray;
+  cursor:pointer;
+  font-size:12px
+}
+
+.fila-hover:hover td{
+  background-color: lightyellow !important; 
+  color:black !important;
+  cursor: pointer;
+}
+
+.fila-seleccionada td {
+  background-color: lightyellow !important; 
+  color:black !important; 
+}
+
+
+.skeleton {
+  height: 1em;
+  background: linear-gradient(90deg, #eee, #ddd, #eee);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+
+.pol-fix-padding {
+  padding: 0 !important;
+}
+.pol-separator {
+  margin: 8px 0 !important;
+}
+
+.pol-table{
+  user-select:none;
+}

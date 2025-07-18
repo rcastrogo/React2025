@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head runat="server">
+  <title>Página principal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./css/w3.css">
+  <style type="text/css" media="screen">
+  </style>
+</head>
+<body>
+  <form id="form1">
+    <h1 class="w3-teal w3-center">WebApi - Index page</h1>
+    
+    <div class="w3-container">
+      <h2 class="w3-gray">Configuración de "Routes"</h2>
+      <a href="/version" target="_blank">/version</a><br />
+      <a href="/users" target="_blank">/users</a><br />
+      <a href="/users/5" target="_blank">/users/{id}</a><br />
+
+      <a href="/ashx/users?action=getItems" target="_blank">/ashx/users?action=getItems</a><br />
+      <a href="/ashx/users?action=getItem&id=5" target="_blank">/ashx/users?action=getItem&Id=5</a><br />
+      <a href="/ashx/users?action=delete&id=5" target="_blank">/ashx/users?action=delete&Id=5</a><br />
+      <a href="/ashx/users?action=new&nombre=Pepe" target="_blank">/ashx/users?action=new&nombre=Pepe</a><br />
+      <a href="/ashx/users?action=save&id=5&nombre=Pepe55" target="_blank">/ashx/users?action=save&id=5&nombre=Pepe55</a><br />
+
+    </div>
+  </form>
+
+</body>
+</html>
