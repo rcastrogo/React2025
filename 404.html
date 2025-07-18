@@ -1,17 +1,18 @@
-HTML
-<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Redireccionando...</title>
-    <script type="text/javascript">
-      const redirectTo = window.location.pathname.replace(/\/React2025/, '');
-      sessionStorage.redirectPath = redirectTo;
-      window.location.href = '/React2025/';
-    </script>
-  </head>
-  <body>
-    <p>Redireccionando...</p>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <title>Redireccionando...</title>
+  <script type="text/javascript">
+    // Extrae la ruta original después de /React2025
+    const redirectTo = window.location.pathname.replace(/\/React2025/, '');
+    // Guarda la ruta en sessionStorage
+    sessionStorage.redirect = redirectTo;
+    // Redirige a la raíz de la app
+    window.location.href = '/React2025/';
+  </script>
+</head>
+<body>
+  <p>Redireccionando...</p>
+</body>
 </html>
