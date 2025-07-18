@@ -1,0 +1,21 @@
+HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    var path = window.location.pathname;
+    var redirectTo = '/';
+    if (window.location.hostname === 'rcastrogo.github.io' && 
+        window.location.pathname.startsWith('/React2025/')) {
+        redirectTo = '/React2025/';
+    }
+    localStorage.setItem('redirectPath', window.location.pathname + window.location.search);
+    window.location.replace(redirectTo);
+  </script>
+</head>
+<body>
+  <p>If you are not redirected automatically, follow this <a href="/">link to the homepage</a>.</p>
+</body>
+</html>
