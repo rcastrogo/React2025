@@ -12,7 +12,7 @@ const Navbar = () => {
             <button className="w3-button w3-left">
                 <i className="w3-xlarge w3-left fa fa-bars"></i>
             </button>
-            {configService.enlaces.map(item => (
+            {configService.enlaces.filter(e => e.text).map(item => (
                 <div key={item.id}>
                     <NavLink to={item.route} className={css(item.right)}>
                         {item.text}

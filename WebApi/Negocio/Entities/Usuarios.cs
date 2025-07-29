@@ -3,6 +3,8 @@ using Dal.Core;
 using Dal.Repositories;
 using Dal.Core.Queries;
 using Negocio.Core;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Negocio.Entities
 {
@@ -12,6 +14,14 @@ namespace Negocio.Entities
     public Usuarios() { }
 
     public Usuarios(DbContext context) : base(context) { }
+
+    
+    // Constructor que acepta una colección de Usuario
+    public Usuarios(IEnumerable<Usuario> usuarios) : base()
+    {
+        usuarios.ToList().ForEach( u => Add(u));
+    }
+
 
     public Usuarios Load()
     {

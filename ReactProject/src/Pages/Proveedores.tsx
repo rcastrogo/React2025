@@ -6,6 +6,7 @@ import TablaPaginada, { type TableDataItem, type ActionResolver } from '../compo
 import proveedoresApiService, { type Proveedor } from '../services/proveedorService.js';
 import { useModal } from '../hooks/useModal';
 import ProveedorForm, { type FrmProveedor } from '../components/forms/ProveedorForm';
+import { useNavigate } from 'react-router-dom';
 
 
 const Proveedores = () => {
@@ -13,7 +14,8 @@ const Proveedores = () => {
     const [datos, setDatos] = useState<Proveedor[]>([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-    const { showModal, closeModal, showNotification } = useModal();
+    const {showModal,closeModal, showNotification } = useModal();
+    const navigate = useNavigate();
 
     const hideLayer = () => PubSub.publish('MSG_HIDE_LAYER');
     const showLayer = (mesagge: string) => PubSub.publish('MSG_SHOW_LAYER', mesagge);
@@ -52,6 +54,11 @@ const Proveedores = () => {
 
     const editAction = (target: Proveedor, callback: CallableFunction) => {
         try {
+
+            const goToPage = () => {
+                navigate(`${target.id}`);
+                closeModal();
+            }
             const validateAndSave = async () => {
                 const data = validateFrmProveedor();
                 if (data == undefined) return;
@@ -66,6 +73,7 @@ const Proveedores = () => {
                 title: 'Edición de proveedores',
                 content: (<ProveedorForm ref={frmProveedor} initialData={target} />),
                 actions: [
+                    <button className="w3-button w3-gray" onClick={goToPage}>Ir</button>,
                     <button className="w3-button w3-black" onClick={validateAndSave}>Grabar</button>,
                     <button className="w3-button w3-blue w3-left" onClick={clearFields}>Limpiar</button>
                 ],

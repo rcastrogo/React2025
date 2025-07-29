@@ -1,0 +1,24 @@
+import React from 'react';
+import CollapsibleBox from './CollapsibleBox';
+
+const App = () => {
+  return (
+    <div>
+      <CollapsibleBox 
+        title="Sección 1" 
+        height="200px"
+        onExpand={() => console.log('Sección expandida')}
+      >
+        <p>Contenido dinámico como children</p>
+      </CollapsibleBox>
+
+      <CollapsibleBox 
+        title="Sección 2" 
+        initialContent="<p>Contenido inicial como string</p>"
+        defaultCollapsed={false}
+      />
+    </div>
+  );
+};
+
+export default App;

@@ -1,0 +1,202 @@
+import React, { useState, useEffect, type JSX } from 'react';
+
+// Definición de tipos
+export type ReportSection = {
+  id: string;
+  type: 'header' | 'detail' | 'group' | 'footer' | 'total';
+  component: React.ComponentType<SectionProps>;
+  key?: string; // Para agrupaciones
+  condition?: (ctx: ReportContext) => boolean;
+};
+
+export type ReportContext = {
+  data: any[];
+  currentGroup?: {
+    value: any;
+    items: any[];
+  };
+  currentItem?: any;
+  isFirstRow?: boolean;
+  isLastRow?: boolean;
+  isLastRowInGroup?: boolean;
+  summary: any;
+};
+
+export type SectionProps = {
+  ctx: ReportContext;
+  section: ReportSection;
+};
+
+export type ReportDefinition = {
+  sections: ReportSection[];
+  orderBy?: string | string[];
+};
+
+// Componente principal del motor de informes
+const ReportEngine = ({ definition, data }: { definition: ReportDefinition, data: any[] }) => {
+
+  const [reportContent, setReportContent] = useState<JSX.Element[]>([]);
+
+  useEffect(() => {
+    generateReport();
+  }, [definition, data]);
+
+  const generateReport = () => {
+
+    // 1. Preparar datos (ordenar si es necesario)
+    const processedData = [...data];
+    if (definition.orderBy) {
+      processedData.sort(createSorter(definition.orderBy));
+    }
+
+    // 2. Procesar secciones
+    const content: JSX.Element[] = [];
+    const context: ReportContext = { 
+      data: processedData,
+      summary: {},
+    };
+
+    // Procesar cada sección en orden
+    definition.sections.forEach((section, index) => {
+      const sectionContent = processSection(section, context);
+      if (sectionContent) {
+        content.push(
+          <React.Fragment key={`${section.id}-${index}`}>
+            {sectionContent}
+          </React.Fragment>
+        );
+      }
+    });
+    setReportContent(content);
+  };
+
+  // Procesar una sección individual
+  const processSection = (section: ReportSection, ctx: ReportContext): JSX.Element | null => {
+    const sectionProps = { ctx: { ...ctx, section }, section };
+
+    switch (section.type) {
+      case 'header':
+        return <section.component {...sectionProps} />;
+      case 'group':
+        return processGroup(section, ctx);
+      case 'detail':
+        return processDetails(section, ctx);
+      case 'footer':
+        return processFooter(section, ctx);
+      case 'total':
+        return <section.component {...sectionProps} />;
+      default:
+        return null;
+    }
+  };
+
+  // Procesar grupos
+  const processGroup = (section: ReportSection, ctx: ReportContext): JSX.Element => {
+    if (!section.key) return <></>;
+    
+    const groupedData = groupBy(ctx.data, section.key);
+    const groupElements: JSX.Element[] = [];
+    
+    Object.entries(groupedData).forEach(([groupValue, items], groupIndex) => {
+      const groupCtx = { 
+        ...ctx, 
+        currentGroup: { value: groupValue, items } 
+      };
+
+      // Renderizar encabezado del grupo
+      groupElements.push(
+        <section.component 
+          key={`group-header-${groupIndex}`}
+          ctx={groupCtx} 
+          section={section} 
+        />
+      );
+      
+      // Procesar detalles para este grupo
+      const detailSection = definition.sections.find(s => s.type === 'detail');
+      if (detailSection) {
+        items.forEach((item, itemIndex) => {
+          const detailCtx = {
+            ...groupCtx,
+            currentItem: item,
+            isFirstRow: itemIndex === 0,
+            isLastRow: itemIndex === items.length - 1,
+          };
+          
+          groupElements.push(
+            processDetails(detailSection, detailCtx) || <></>
+          );
+        });
+      }
+      
+      // Procesar footer para este grupo
+      const footerSection = definition.sections.find(s => s.type === 'footer');
+      if (footerSection) {
+        const footerCtx = { 
+          ...groupCtx, 
+          isLastRowInGroup: true 
+        };
+        
+        const footerContent = processFooter(footerSection, footerCtx);
+        if (footerContent) {
+          groupElements.push(footerContent);
+        }
+      }
+    });
+    
+    return <>{groupElements}</>;
+  };
+
+  // Procesar detalles
+  const processDetails = (section: ReportSection, ctx: ReportContext): JSX.Element | null => {
+    if (section.condition && !section.condition(ctx)) return null;
+    
+    return (
+      <section.component 
+        key={`detail-${ctx.currentItem?.id || Date.now()}`}
+        ctx={ctx} 
+        section={section} 
+      />
+    );
+  };
+
+  // Procesar pies de grupo
+  const processFooter = (section: ReportSection, ctx: ReportContext): JSX.Element | null => {
+    if (section.condition && !section.condition(ctx)) return null;
+    
+    return (
+      <section.component 
+        key={`footer-${ctx.currentGroup?.value || 'global'}`}
+        ctx={ctx} 
+        section={section} 
+      />
+    );
+  };
+
+  // Función para agrupar datos
+  const groupBy = (data: any[], key: string): Record<string, any[]> => {
+    return data.reduce((acc, item) => {
+      const groupKey = item[key];
+      acc[groupKey] = acc[groupKey] || [];
+      acc[groupKey].push(item);
+      return acc;
+    }, {} as Record<string, any[]>);
+  };
+
+  // Función para ordenar datos
+  const createSorter = (orderBy: string | string[]) => {
+    const keys = Array.isArray(orderBy) ? orderBy : [orderBy];  
+    return (a: any, b: any) => {
+      for (const key of keys) {
+        if (a[key] < b[key]) return -1;
+        if (a[key] > b[key]) return 1;
+      }
+      return 0;
+    };
+  };
+
+  return <div className="report-output">{reportContent}</div>;
+};
+
+
+export default ReportEngine;

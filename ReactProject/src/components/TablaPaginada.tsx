@@ -367,7 +367,7 @@ const TablaPaginada = <T extends TableDataItem>(
                 <button className="w3-button w3-left w3-border-right" title="Cargar" onClick={handleRefresh}>
                     <i className={"w3-xlarge w3-left fa fa-refresh" + (cargando == true ? ' w3-spin' : '')}></i>
                 </button>
-                <span className="w3-left" style={{ padding: '6px 0 4px 8px' }}>
+                <span className="w3-left pol-paginator-label">
                     {options.entity}: {datos.length} elementos
                     {datosFiltrados.length != datos.length && ` (${datosFiltrados.length} filtrados/s)`}
                     {seleccionados.size > 0 && ` (${seleccionados.size} seleccionado/s)`} - Página {paginaActual}/{totalPaginas}

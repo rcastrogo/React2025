@@ -1,5 +1,5 @@
 ﻿
-import { useCallback } from 'react';
+import { useCallback, type ReactNode } from 'react';
 import PubSub from '../components/Pubsub';
 import React from 'react';
 
@@ -27,11 +27,12 @@ export const useModal = () => {
 
     const closeModal = useCallback(() => { PubSub.publish('MSG_CLOSE_MODAL'); }, []);
 
-    const showNotification = useCallback((message: string, delay: number) => {
+    const showNotification = useCallback((message: ReactNode, delay: number, allowManualClose = false) => {
         showModal({
             title: 'Informacion',
             content: <p>{message}</p>,
-            showCloseButton: false
+            showCloseButton: false,
+            allowManualClose: allowManualClose
         });
         setTimeout(closeModal, delay);
     }, []);
@@ -61,6 +62,8 @@ export const useModal = () => {
         });
     }, [showModal, closeModal]);
 
+    const showLoader = useCallback(() => { PubSub.publish('MSG_LOADING'); }, []);
+    const hideLoader = useCallback(() => { PubSub.publish('MSG_LOADING_END'); }, []);
 
-    return { showModal, closeModal, showNotification, confirm };
+    return { showModal, closeModal, showNotification, confirm, showLoader, hideLoader };
 };

@@ -128,7 +128,139 @@ div[data-menu] {
 .pol-separator {
   margin: 8px 0 !important;
 }
+.pol-separator-line {
+  margin: 1px 0 !important;
+  height:1px;
+  background-color:gray;
+  width:100%
+}
 
 .pol-table{
   user-select:none;
+}
+
+.pol-table-row-header{
+
+}
+
+.pol-table-row:nth-child(odd) {
+  background-color: white;
+}
+
+.pol-table-row:nth-child(even) {
+  background-color: #e9e9e9;
+}
+
+.pol-table-row td,
+.pol-table-row th {
+  background-color: inherit; 
+}
+
+.pol-table-row-header td{
+    text-align:left;
+    padding:8px 2px;
+}
+
+.pol-paginator-label{
+  padding: 6px 0 4px 8px;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  width: calc(100% - 682px);
+  font-size:11px;
+  background-color:antiquewhite;
+  line-height:30px;
+  white-space:nowrap
+}
+
+.pol-top-bar{
+    background-color:black;
+    margin-top: 0px;
+    position: fixed;
+    top: 0;
+}
+
+.pol-report-viewer-container{
+  border-radius:8px;
+  border:solid 1px black;
+  margin: 5px 0;
+}
+.pol-report-viewer-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.pol-report-viewer-table td {
+    padding:10px;
+}
+
+.pol-app-title{
+  line-height:.9em;
+  white-space:nowrap
+}
+
+a.w3-bar-item{
+  padding-left : 10px !important;
+  padding-right: 10px !important;
+}
+
+
+
+
+.rcg-list {overflow: auto;height: 250px;padding: 2px;}
+.rcg-list li {cursor : pointer;outline:none;border:solid 1px transparent;margin: 1px 0;}
+.rcg-list li.selected{background-color:DodgerBlue !important;}
+.rcg-list li:focus{border:solid 1px black;}
+.rcg-list li:hover{background-color: #e9e9e9;}
+
+.cal-wrapper { width :100%; border:solid 1px gray; padding:8px; font-size:12px; position:relative; }
+.cal-wrapper div, .cal-wrapper td {text-align:center;vertical-align:middle;}
+.cal-header { }
+.cal-body{ padding:4px; }
+.cal-overlay-0 { }
+.cal-overlay-1{ position:absolute;left:0;bottom:0;top:0;right:0;display:none;flex-wrap:wrap;justify-content:center; overflow:auto }
+.cal-overlay-1 button.cal-month{ margin: 2%; width: 29%; overflow: hidden; text-overflow:ellipsis; cursor:pointer; }
+.cal-overlay-1 button.cal-year{ margin: 1%; width: 22%; overflow: hidden; text-overflow:ellipsis; cursor:pointer; }
+.cal-footer { border-top: solid 1px gray;padding-top:8px;}
+.cal-prev, .cal-next{ width : 1%; padding:4px 8px; border: solid 1px gray; border-radius: 5px; cursor:pointer;}
+.cal-label{ padding:4px; cursor:pointer;}
+.cal-table { width:100%; height:100%;  border-spacing:1px; table-layout:fixed; position:relative}
+.cal-table td {background-color:White; width: 14.28571%; vertical-align:top; padding:2px; position:relative; }
+.cal-table td.cal-day {color:black; cursor:pointer;}
+
+.cal-table td.cal-day.active{border-radius: 4px; background-color: silver; }
+.cal-table td.cal-day:hover{border-radius: 4px; background-color: Highlight; color:white;}
+.cal-table td.current {border-radius: 4px; background-color: Highlight; color:white; }
+.cal-overlay-1 button.current { font-weight : bold; }
+.cal-table td.cal-day-disabled {color:silver; visibility:visible;}
+.cal-row-header th{ background-color:transparent }
+.cal-line td{background-color:silver;height:1px; padding:0}
+.cal-txt-panel{position: absolute;left: 0;top:0;width:200px;display:none;background-color: white;}
+.cal-txt-panel .cal-footer {display : none;}
+
+.autocomplete {position: relative;display: inline-block; width:100%}
+.autocomplete-items {position: absolute;border: 1px solid #d4d4d4;top: calc(100% + 2px);left: 0;right: 0;max-height:200px;overflow-y:auto;overflow-x:hidden;background-color: white;z-index:1 }
+.autocomplete-items div {padding: 10px;cursor: pointer;border-bottom: 1px solid #d4d4d4;overflow:hidden;text-overflow:ellipsis;}
+.autocomplete-items div:last-of-type {border-bottom: none;}
+.autocomplete-items div:hover {background-color: #e9e9e9; }
+.autocomplete-active {background-color: DodgerBlue !important; color: #ffffff; }
+
+.autocomplete.combo-box::after {
+    border-bottom: 2px solid rgb(0 0 0 / 75%);
+    border-right: 2px solid rgb(0 0 0 / 75%);
+    content: "";
+    display: block;
+    height: 12px;
+    pointer-events: none;
+    position: absolute;
+    right: 16px;
+    top: calc(100% - 22px);
+    transform: translate(0, -7%) rotate(45deg);
+    width: 12px;
+    cursor:pointer;
+}
+.autocomplete.combo-box.open::after {
+    top: calc(100% - 16px);
+    transform: translate(0, -7%) rotate(225deg);
+}
+.combo-box:focus {
+        
 }

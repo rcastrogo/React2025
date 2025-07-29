@@ -60,12 +60,21 @@ namespace WebApi.Handlers
 
     private Usuarios _getUsers(HttpContext httpContext)
     {
+      var query = GetItem("q").ToLower();
+      if (query != "")
+      {
+        return new Usuarios(
+          new Usuarios().Load()
+                        .Where(u => u.Nombre.ToLower().Contains(query))
+        );
+      }
       System.Threading.Thread.Sleep(2000);
       return new Usuarios().Load();
     }
 
     private Usuario _getUserById(HttpContext httpContext)
     {
+      System.Threading.Thread.Sleep(2000);
       var id = ParseInteger("id", 0);
       return new Usuario().Load(id);
     }

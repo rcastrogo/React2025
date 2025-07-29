@@ -1,4 +1,4 @@
-﻿import React, { forwardRef, useImperativeHandle, useState } from 'react';
+﻿import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import type { Proveedor } from '../../services/proveedorService';
 
 
@@ -22,6 +22,14 @@ const ProveedorForm = forwardRef<FrmProveedor, ProveedorFormProps>(({ initialDat
             fechaDeAlta: ''
         }
     );
+
+    
+    useEffect(() => {
+        if (initialData) {
+            setFormData(initialData);
+        }
+    }, [initialData]);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;

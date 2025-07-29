@@ -1,4 +1,5 @@
 
+import axios from 'axios';
 import axiosInstance from '../api/axiosInstance';
 
 export interface Proveedor {
@@ -15,17 +16,49 @@ export interface ProveedorPayload {
     descripcion: string;
 }
 
+const isLocalhost = window.location.hostname.toLowerCase() === 'localhost';
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const BASE_DATA_URL = `${import.meta.env.BASE_URL}data.js`;
+
 export const proveedorService = {
     getAll: async (): Promise<Proveedor[]> => {
-        //const response = await axiosInstance.get('/users');
-        const response = await axiosInstance.get('/ashx/users?action=getItems');
+        if (isLocalhost) {
+            //const response = await axiosInstance.get('/users');
+            const response = await axiosInstance.get('/ashx/users?action=getItems');
+            return response.data;
+        }
+
+        await sleep(1500);
+        const a = axios.create();
+        const response = await a.get(BASE_DATA_URL);
         return response.data;
     },
 
     getById: async (id: number): Promise<Proveedor> => {
-        //const response = await axiosInstance.get(`/users/${id}`);
-        const response = await axiosInstance.get(`/ashx/users?action=getItem&${id}`);
-        return response.data;
+        if (isLocalhost) {
+            //const response = await axiosInstance.get(`/users/${id}`);
+            const response = await axiosInstance.get(`/ashx/users?action=getItem&id=${id}`);
+            return response.data;
+        }
+
+        await sleep(1500);
+        const a = axios.create();
+        const response = await a.get(BASE_DATA_URL);
+        return (response.data as Proveedor[]).find( p => p.id == id)!;
+    },
+    getByQuery: async (q: string): Promise<Proveedor[]> => {
+        if (isLocalhost) {
+            //const response = await axiosInstance.get(`/users/${id}`);
+            const response = await axiosInstance.get(`/ashx/users?action=getItems&q=${q}`);
+            return response.data;
+        }
+
+        await sleep(1500);
+        const a = axios.create();
+        const response = await a.get(BASE_DATA_URL);
+        const term = q.toLowerCase();
+        return (response.data as Proveedor[]).filter( p => p.nombre.toLowerCase() == term );
     },
 
     createProveedor: async (proveedor: ProveedorPayload): Promise<Proveedor> => {
