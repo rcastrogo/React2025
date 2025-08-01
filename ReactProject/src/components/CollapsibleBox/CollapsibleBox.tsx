@@ -49,7 +49,7 @@ const CollapsibleBox: React.FC<CollapsibleBoxProps> = ({
     return (
         <div className={`collapsible-box w3-border ${className}`}>
             <button
-                className="w3-block w3-border-0"
+                className="w3-block w3-border-0 collapsible-box-header"
                 style={{ outlineStyle: 'none' }}
                 onClick={onToggleCollapse}
                 aria-expanded={!collapsed}

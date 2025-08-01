@@ -58,7 +58,7 @@ export const proveedorService = {
         const a = axios.create();
         const response = await a.get(BASE_DATA_URL);
         const term = q.toLowerCase();
-        return (response.data as Proveedor[]).filter( p => p.nombre.toLowerCase() == term );
+        return (response.data as Proveedor[]).filter( p => p.nombre.toLowerCase().includes(term) );
     },
 
     createProveedor: async (proveedor: ProveedorPayload): Promise<Proveedor> => {

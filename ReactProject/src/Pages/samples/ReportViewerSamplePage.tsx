@@ -68,7 +68,7 @@ const ReportViewerSamplePage = () => {
     };
 
     const obtenerDatos = async () => {
-        PubSub.publish('MSG_SHOW_LAYER', "Recuperando datos");
+        PubSub.publish(PubSub.messages.SHOW_LAYER, "Recuperando datos");
         try {
             setCargando(true);
             const respuesta = await proveedoresApiService.getAll()
@@ -76,7 +76,7 @@ const ReportViewerSamplePage = () => {
         } catch (err: any) {
         } finally {
             setCargando(false);
-            PubSub.publish('MSG_HIDE_LAYER');
+            PubSub.publish(PubSub.messages.HIDE_LAYER);
         }
     };
 

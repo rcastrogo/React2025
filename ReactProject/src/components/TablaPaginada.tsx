@@ -266,7 +266,7 @@ const TablaPaginada = <T extends TableDataItem>(
     // ================================================================================================
     const handleDeleteSelected = async () => {
         if (seleccionados.size === 0) {
-            PubSub.publish('MSG_INFO', "Debe seleccionar al menos un elemento de la lista.");
+            PubSub.publish(PubSub.messages.SHOW_INFO, "Debe seleccionar al menos un elemento de la lista.");
             return;
         }
         const result = await confirm(
@@ -297,7 +297,7 @@ const TablaPaginada = <T extends TableDataItem>(
             const msg = seleccionados.size === 0
                 ? "Debe seleccionar un elemento de la lista."
                 : "Debe seleccionar un solo elemento de la lista.";
-            PubSub.publish('MSG_INFO', msg);
+            PubSub.publish(PubSub.messages.SHOW_INFO, msg);
             return;
         }
         const id = seleccionados.values().next().value;

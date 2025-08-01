@@ -60,14 +60,14 @@ export default function ProveedorPage() {
 
     const obtenerDatos = async () => {
         setTimeout(async () => {
-            PubSub.publish('MSG_SHOW_LAYER', "Recuperando datos");
+            PubSub.publish(PubSub.messages.SHOW_LAYER, "Recuperando datos");
             try {
                 const respuesta = await proveedoresApiService.getById(Number(id));
                 setFormData(respuesta);
             } catch (err: any) {
 
             } finally {
-                PubSub.publish('MSG_HIDE_LAYER');
+                PubSub.publish(PubSub.messages.HIDE_LAYER);
             }
         }, 0);
     };
@@ -77,9 +77,9 @@ export default function ProveedorPage() {
     }, [id]);
 
 
-    const hideLayer = () => PubSub.publish('MSG_HIDE_LAYER');
-    const showLayer = (mesagge: string) => PubSub.publish('MSG_SHOW_LAYER', mesagge);
-    const showInfo = (mesagge: string | JSX.Element) => PubSub.publish('MSG_INFO', mesagge);
+    const hideLayer = () => PubSub.publish(PubSub.messages.HIDE_LAYER);
+    const showLayer = (mesagge: string) => PubSub.publish(PubSub.messages.SHOW_LAYER, mesagge);
+    const showInfo = (mesagge: string | JSX.Element) => PubSub.publish(PubSub.messages.SHOW_INFO, mesagge);
 
 
     const navigate = useNavigate();

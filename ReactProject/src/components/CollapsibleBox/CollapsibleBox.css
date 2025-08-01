@@ -6,7 +6,7 @@
   border-bottom-left-radius: 0;
 }
 
-.collapsible-box button {
+button.collapsible-box-header {
   padding: 12px;
   text-align: left;
   width: 100%;
@@ -19,6 +19,6 @@
 
 }
 
-.collapsible-box button:hover {
+button.collapsible-box-header:hover {
   background: #e0e0e0;
 }

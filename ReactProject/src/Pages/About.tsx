@@ -1,6 +1,7 @@
 ﻿
 import { useEffect, useState } from "react";
 import { useModal } from "../hooks/useModal";
+import PubSub from "../components/Pubsub";
 import CollapsibleBox from "../components/CollapsibleBox/CollapsibleBox";
 import proveedoresApiService, { type Proveedor } from '../services/proveedorService.js';
 import { useNavigate } from "react-router-dom";
@@ -30,8 +31,13 @@ const About = () => {
             '../reports/table',
             '../list/combo-box',
             '../list/list-control',
-            '../list/autocomplete-control'
+            '../list/autocomplete-control',
+            'https://rcastrogo.github.io/',
+            'https://rcastrogo.github.io/puzz/',
+            '../core-test',
+            '../group-by-nested',
         ];
+        localStorage.setItem('global', JSON.stringify({ id: 5 }));
         internal ? navigate(targets[index - 1])
             : window.open(targets[index - 1]);
     }
@@ -62,9 +68,13 @@ const About = () => {
             <li onClick={() => navigateTo(10, true)}>list/combo-box</li>
             <li onClick={() => navigateTo(11, true)}>list/list-control</li>
             <li onClick={() => navigateTo(12, true)}>list/autocomplete-control</li>
+            <li onClick={() => navigateTo(15, true)}>core-test</li>
+            <li onClick={() => navigateTo(16, true)}>group-by-nested</li>
+            
 
             <li className="w3-teal w3-center">Otros enlaces</li>
-            <li onClick={() => navigateTo(7)}>GitHub/rcastrogo</li>
+            <li onClick={() => navigateTo(13)}>rcastrogo.github.io</li>
+            <li onClick={() => navigateTo(14)}>rcastrogo.github.io/Puzz</li>
             <li onClick={() => navigateTo(1)}>Libreria JS2024</li>
             <li onClick={() => navigateTo(2)}>Notas App</li>
             <li onClick={() => navigateTo(3)}>Angular</li>
@@ -73,6 +83,155 @@ const About = () => {
             <li onClick={() => navigateTo(6)}>Firebase App</li>
         </ul>
     )
+
+
+    const { showModal, closeModal, showNotification } = useModal();
+
+    const showMessage = () => {
+        PubSub.publish(PubSub.messages.SHOW_INFO, 'Los datos se han guardado');
+    }
+
+    const openConfirmDialog = () => {
+        showModal({
+            title: 'Confirmación',
+            content: (
+                <div>
+                    <h4>Grabar elemento</h4>
+                    <p>¿Estás seguro de guardar los cambios?</p>
+                </div>
+            ),
+            showCloseButton: false,
+            actions: [
+                <button className="w3-button w3-gray" onClick={closeModal}>Cancelar</button>,
+                <button className="w3-button w3-gray" onClick={showMessage}>Grabar</button>
+            ],
+            beforeClose: () => {
+                return true;
+            },
+            allowManualClose: false
+        });
+    };
+
+    const openConfirmDialogNoTitle = () => {
+        showModal({
+            title: '',
+            content: (
+                <div>
+                    <h4>Grabar elemento</h4>
+                    <p>¿Estás seguro de guardar los cambios?</p>
+                </div>
+            ),
+            showCloseButton: false,
+            actions: [
+                <button className="w3-button w3-gray" onClick={closeModal}>Cancelar</button>,
+                <button className="w3-button w3-gray" onClick={showMessage}>Grabar</button>
+            ],
+            beforeClose: () => {
+                return true;
+            },
+            allowManualClose: true
+        });
+    };
+
+    const loginDialogContent = (
+        <form className="w3-container" action="/action_page.php">
+            <div className="w3-section">
+                <label><b>Username</b></label>
+                <input className="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter Username" name="usrname" required></input>
+                <label><b>Password</b></label>
+                <input className="w3-input w3-border" type="password" placeholder="Enter Password" name="psw" required></input>
+                <button className="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button>
+                <input className="w3-check w3-margin-top" type="checkbox"></input> Remember me
+                <div className="w3-container w3-border-top w3-padding-16 w3-light-grey">
+                    <button type="button" className="w3-button w3-red">Cancel</button>
+                    <span className="w3-right w3-padding w3-hide-small">Forgot <a href="#">password?</a></span>
+                </div>
+            </div>
+        </form>
+    );
+
+    const openConfirmDialog2 = () => {
+        showModal({
+            title: 'Confirmación',
+            content: (
+                <p>¿Deseas continuar con la acción?</p>
+            ),
+            showCloseButton: false,
+            actions: [
+                <button className="w3-button w3-gray" onClick={closeModal}>Cancelar</button>,
+                <button className="w3-button w3-gray" onClick={showMessage}>Grabar</button>,
+                <button className="w3-button w3-gray" onClick={() => alert('Limpiado')}>Limpiar</button>
+            ],
+            beforeClose: () => {
+                const close = window.confirm('¿Estás seguro de cerrar el diálogo?');
+                return close;
+            },
+            allowManualClose: false
+        });
+    };
+
+    const openInfoDialog = () => {
+        showModal({
+            title: 'Informacion',
+            content: loginDialogContent,
+            showCloseButton: true,
+            allowManualClose: true
+        });
+    };
+
+    const openInfoDialog2 = () => {
+        showModal({
+            title: 'Informacion',
+            content: (
+                <p>Los datos están en el repositorio</p>
+            ),
+            showCloseButton: false,
+            allowManualClose: true
+        });
+    };
+
+    const openNoTitleDialog = () => {
+        showModal({
+            title: '',
+            content: (
+                <p>Los datos están en el repositorio</p>
+            ),
+            showCloseButton: false,
+            allowManualClose: true
+        });
+    };
+
+    const modalsContent = (
+        <>
+            <div className="w3-bar">
+                <button onClick={openConfirmDialog} className="w3-button w3-black">
+                    Confirmación
+                </button>
+                <button onClick={openConfirmDialogNoTitle} className="w3-button w3-black">
+                    Confirmación sin título
+                </button>
+                <button onClick={openConfirmDialog2} className="w3-button w3-teal">
+                    LoginDlg
+                </button>
+                <button onClick={openInfoDialog} className="w3-button w3-blue">
+                    Confirm
+                </button>
+                <button onClick={openInfoDialog2} className="w3-button w3-red">
+                    Mensaje
+                </button>
+                <button onClick={() => showNotification('Hola', 1000)} className="w3-button w3-yellow">
+                    Notificación con título
+                </button>
+                <button onClick={openNoTitleDialog} className="w3-button w3-yellow">
+                    Notificación sin título
+                </button>
+            </div>
+            <div className="w3-container">
+
+            </div>
+        </>
+    )
+
 
     return (
         <>
@@ -111,9 +270,9 @@ const About = () => {
                     </CollapsibleBox>
                     <CollapsibleBox
                         title="Otros"
-                        height="100px"
-                        initialContent=""
-                        defaultCollapsed={false}
+                        height="300px"
+                        initialContent={modalsContent}
+                        defaultCollapsed={true}
                     />
                 </div>
 

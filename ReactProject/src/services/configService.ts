@@ -11,91 +11,107 @@ import ReportViewerTableModeSamplePage from "../Pages/samples/ReportViewerTableM
 import ComboBoxSamplePage from "../Pages/samples/ComboBoxSamplePage";
 import ListControlSamplePage from "../Pages/samples/ListControlSamplePage";
 import AutocompleteControlSamplePage from "../Pages/samples/AutocompleteControlSamplePage";
+import CoreTestSamplePage from "../Pages/samples/CoreTestSamplePage";
+import GroupByNestedSamplePage from "../Pages/samples/GoupByNestedSamplePage";
 
 export interface Enlace {
-  id: number;
-  text: string | ReactElement;
-  route: string;
-  target: any; 
-  index?: boolean;
-  right?: boolean;
+    id: number;
+    text: string | ReactElement;
+    route: string;
+    target: any;
+    index?: boolean;
+    right?: boolean;
 }
 
 
-const enlaces:Enlace[] = [
+const enlaces: Enlace[] = [
     {
         id: 1,
         text: React.createElement('i', { className: 'w3-xlarge w3-left fa fa-home' }),
         route: '/',
-        target :Home,
+        target: Home,
         index: true
     },
     {
         id: 100,
         text: 'Proveedores',
         route: 'proveedores',
-        target : Proveedores
+        target: Proveedores
     },
     {
         id: 101,
         text: '',
         route: 'proveedores/:id',
         right: false,
-        target : ProveedorPage
+        target: ProveedorPage
     },
     {
         id: 102,
         text: '',
         route: 'reports/table',
         right: false,
-        target : ReportViewerTableModeSamplePage
+        target: ReportViewerTableModeSamplePage
     },
     {
         id: 103,
         text: '',
         route: 'reports/simple',
         right: false,
-        target : ReportViewerSamplePage
+        target: ReportViewerSamplePage
     },
     {
         id: 104,
         text: '',
         route: 'list/combo-box',
         right: false,
-        target : ComboBoxSamplePage
+        target: ComboBoxSamplePage
     },
     {
         id: 105,
         text: '',
         route: 'list/list-control',
         right: false,
-        target : ListControlSamplePage
+        target: ListControlSamplePage
     },
     {
         id: 106,
         text: '',
         route: 'list/autocomplete-control',
         right: false,
-        target : AutocompleteControlSamplePage
+        target: AutocompleteControlSamplePage
+    },
+    {
+        id: 107,
+        text: '',
+        route: 'core-test',
+        right: false,
+        target: CoreTestSamplePage
+    },
+    {
+        id: 108,
+        text: '',
+        route: 'group-by-nested',
+        right: false,
+        target: GroupByNestedSamplePage
     },
     {
         id: 200,
         text: 'Dashboard',
         route: 'dashboard',
-        target : Dashboard
+        target: Dashboard
     },
     {
         id: 1000,
-        text: '?',
+        text: '',
         route: 'about',
         right: true,
-        target : About
-    },   
+        target: About
+    },
     {
         id: 199,
         text: '',
         route: '*',
-        target : NoPage
+        target: NoPage
     }
 ];
 

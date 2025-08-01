@@ -6,6 +6,7 @@ import ComboBoxSamplePage from "./samples/ComboBoxSamplePage";
 import ListControlSamplePage from "./samples/ListControlSamplePage";
 import AutocompleteControlSamplePage from "./samples/AutocompleteControlSamplePage";
 import useDebounce from "../hooks/useDebounce";
+import GroupByNestedSamplePage from "./samples/GoupByNestedSamplePage";
 
 interface SamplePageConfig {
     id: string;
@@ -45,6 +46,12 @@ const samplePages: SamplePageConfig[] = [
         title: 'AutoCompleteControl',
         description: 'Ejemplo de uso del control autocomplete.',
         component: AutocompleteControlSamplePage,
+    },
+    {
+        id: 'tree-viewer-control',
+        title: 'TreeViewerControl',
+        description: 'Ejemplo de uso del control tree.',
+        component: GroupByNestedSamplePage,
     },
 ];
 

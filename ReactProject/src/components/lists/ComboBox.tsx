@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type MouseEventHandler } from "react";
-import useClickOutside from "../../hooks/useClickOutside";
+import useClickOutside, { usePageNavigation } from "../../hooks/useClickOutside";
 
 interface Resolver<T> {
     text: keyof T;
@@ -27,9 +27,15 @@ function ComboBoxControl<T>({
     const [hiddenValue, setHiddenValue] = useState('');
     const [showList, setShowList] = useState(false);
     const [selectedIndex, setSelectIndex] = useState(-1);
+    const [initialSelectedIndex, setInitialSelectedIndex] = useState(-1);
 
     const wrapperRef = useRef(null);
-    const listRef = useRef<HTMLDivElement>(null); // Ref for the autocomplete-items div
+    const listRef = useRef<HTMLDivElement>(null);
+    const {calculatePageIndex} = usePageNavigation({
+        listRef,
+        totalItems: dataSource.length,
+        current: selectedIndex,
+    });
 
     const getText = useCallback((item: any) => resolver ? item[resolver.text] : item.toString(), [resolver]);
     const getId = useCallback((item: any) => resolver ? item[resolver.id] : item.toString(), [resolver]);
@@ -49,10 +55,13 @@ function ComboBoxControl<T>({
         setInputValue(getText(target));
         setHiddenValue(getId(target));
         if (onSelect) onSelect(target);
-        if(close) setShowList(false);
+        if (close) setShowList(false);
     }, [getText, getId, dataSource]);
 
     const handleInputClick = () => {
+        if (!showList) { // Si la lista va a abrirse
+            setInitialSelectedIndex(selectedIndex);
+        }
         setShowList(!showList);
     };
 
@@ -90,48 +99,37 @@ function ComboBoxControl<T>({
             return;
         }
         if (key === 'Escape') {
-            setShowList(false);
+            setCurrentIndex(initialSelectedIndex);
             e.preventDefault();
             return;
         }
         if (key === 'ArrowDown') {
-            e.preventDefault(); 
-            if(showList)
+            e.preventDefault();
+            if (showList)
                 setCurrentIndex(Math.min(selectedIndex + 1, dataSource.length - 1), false);
             else
                 setShowList(true);
             return;
-        } 
+        }
         if (key === 'ArrowUp') {
-            e.preventDefault(); 
+            e.preventDefault();
             if (showList)
                 setCurrentIndex(Math.max(selectedIndex - 1, 0), false);
         }
         if (key === 'Enter') {
-            e.preventDefault(); 
+            e.preventDefault();
             if (showList && selectedIndex > -1)
                 setShowList(false);
-            else 
+            else
                 setShowList(true);
             return;
         }
         if (key === 'PageDown' || key === 'PageUp') {
-            e.preventDefault(); 
+            e.preventDefault();
             if (showList) {
-                if (listRef.current && dataSource.length) {
-                    const listHeight = listRef.current.clientHeight;
-                    const itemHeight = (listRef.current.children[0] as HTMLElement).offsetHeight;
-                    if (itemHeight === 0) return; 
-
-                    const itemsPerPage = Math.floor(listHeight / itemHeight);
-                    let newIndex = selectedIndex;
-                    if (key === 'PageDown') {
-                        newIndex = Math.min(selectedIndex + itemsPerPage, dataSource.length - 1);
-                    } else { 
-                        newIndex = Math.max(selectedIndex - itemsPerPage, 0);
-                    }
-                    setCurrentIndex(newIndex, false);
-                }
+                const index = calculatePageIndex(key);
+                setCurrentIndex(index);
+                return;
             }
         }
     }, [showList, selectedIndex, dataSource, setCurrentIndex, hiddenValue, getId]);
@@ -147,12 +145,12 @@ function ComboBoxControl<T>({
                 onClick={handleInputClick}
                 onKeyDown={handleKeyDown}
                 readOnly={true}
-                style={{ width:'100%'}}
+                style={{ width: '100%' }}
             />
             <input type="hidden" value={hiddenValue} />
             <div ref={listRef}
-                 className={`autocomplete-items ${showList ? '' : 'w3-hide'}`}
-                 tabIndex={-1}>
+                className={`autocomplete-items ${showList ? '' : 'w3-hide'}`}
+                tabIndex={-1}>
                 {
                     dataSource.map((item, index) => (
                         <div

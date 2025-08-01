@@ -11,10 +11,10 @@ const ProgressBar = () => {
     let subscriptions: (() => void)[];
     const initSubscriptions = () => {
         subscriptions = [
-            PubSub.subscribe<string>('MSG_LOADING', () => {
+            PubSub.subscribe<string>(PubSub.messages.LOADING, () => {
                 setShowProgressBar(true);
             }),
-            PubSub.subscribe('MSG_LOADING_END', () => {
+            PubSub.subscribe(PubSub.messages.LOADING_END, () => {
                 setShowProgressBar(false);
             })
         ];

@@ -1,17 +1,14 @@
 ﻿import { useEffect, useState } from 'react';
 
-// Define las props para el SplashScreen
 interface SplashScreenProps {
     onFinish: () => void;
     splashTime?: number;
 }
 
-function SplashScreen({
-    onFinish,
-    splashTime = 4000
-}: SplashScreenProps) {
+function SplashScreen({ onFinish, splashTime = 4000 }: SplashScreenProps) {
 
     const [progress, setProgress] = useState(0);
+    const [version, setVersion] = useState(import.meta.env.VITE_APP_VERSION || import.meta.env.npm_package_version || 'Desconocida');
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -48,22 +45,25 @@ function SplashScreen({
                 <h1 className="w3-jumbo w3-animate-top w3-text-white pol-app-title">
                     React-App
                 </h1>
+                <div className="w3-small">
+                    Version: {version}
+                </div>
                 <p className="w3-large w3-text-white w3-animate-bottom">
                     Cargando la magia...
                 </p>
 
-                <div className="w3-light-grey w3-round-xlarge w3-margin-top" style={{ width: '100%', height: '25px' }}>
+                <div className="w3-light-grey w3-round-xlarge w3-margin-top" style={{ width: '100%', height: '15px' }}>
                     <div
                         className="w3-container w3-green w3-round-xlarge"
                         style={{ width: `${progress}%`, height: '100%', transition: 'width 0.1s linear' }}
                     ></div>
                 </div>
-                <p className="w3-text-white w3-small w3-margin-top w3-animate-right">
+                <p className="w3-large w3-text-white w3-small w3-margin-top w3-animate-right">
                     {progress}%
                 </p>
-                <small className="w3-animate-left">
-                    By Rafael Castro Gómez 2025.
-                </small>
+                <div className="w3-large w3-animate-left">
+                    Rafael Castro Gómez 2025
+                </div>
             </div>
         </div>
     );

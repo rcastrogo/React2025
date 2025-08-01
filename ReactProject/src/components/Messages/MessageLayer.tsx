@@ -14,7 +14,7 @@ const MessageLayer = () => {
     let subscriptions: (() => void)[];
     const initSubscriptions = () => {
         subscriptions = [
-            PubSub.subscribe<string>('MSG_INFO', (msg) => {
+            PubSub.subscribe<string>(PubSub.messages.SHOW_INFO, (msg) => {
                 setLayerVisible(true);
                 setLayerMessage(msg);
                 setZIndex(zindex);
@@ -23,12 +23,12 @@ const MessageLayer = () => {
                     setZIndex(0);
                 }, 1500);
             }),
-            PubSub.subscribe('MSG_SHOW_LAYER', (msg = '') => {
+            PubSub.subscribe(PubSub.messages.SHOW_LAYER, (msg = '') => {
                 setLayerVisible(true);
                 setLayerMessage(msg);
                 setZIndex(zindex);
             }),
-            PubSub.subscribe('MSG_HIDE_LAYER', () => {
+            PubSub.subscribe(PubSub.messages.HIDE_LAYER, () => {
                 setLayerVisible(false);
                 setLayerMessage('');
                 setZIndex(0);

@@ -203,13 +203,29 @@ a.w3-bar-item{
 }
 
 
+@keyframes bounce-up-down {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px); 
+  }
+  100% {
+    transform: translateY(0); 
+  }
+}
+.animated-check-icon {
+  animation: bounce-up-down 1s infinite ease-in-out;
+  display: inline-block;
+}
 
 
 .rcg-list {overflow: auto;height: 250px;padding: 2px;}
-.rcg-list li {cursor : pointer;outline:none;border:solid 1px transparent;margin: 1px 0;}
+.rcg-list li {cursor : pointer;outline:none;border-bottom:solid 1px silver;margin: 0; padding:4px; user-select: none;}
 .rcg-list li.selected{background-color:DodgerBlue !important;}
-.rcg-list li:focus{border:solid 1px black;}
+.rcg-list li:focus{background-color: #e9e9e9;}
 .rcg-list li:hover{background-color: #e9e9e9;}
+
 
 .cal-wrapper { width :100%; border:solid 1px gray; padding:8px; font-size:12px; position:relative; }
 .cal-wrapper div, .cal-wrapper td {text-align:center;vertical-align:middle;}

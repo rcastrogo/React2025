@@ -17,9 +17,9 @@ const Proveedores = () => {
     const {showModal,closeModal, showNotification } = useModal();
     const navigate = useNavigate();
 
-    const hideLayer = () => PubSub.publish('MSG_HIDE_LAYER');
-    const showLayer = (mesagge: string) => PubSub.publish('MSG_SHOW_LAYER', mesagge);
-    const showInfo = (mesagge: string | JSX.Element) => PubSub.publish('MSG_INFO', mesagge);
+    const hideLayer = () => PubSub.publish(PubSub.messages.HIDE_LAYER);
+    const showLayer = (mesagge: string) => PubSub.publish(PubSub.messages.SHOW_LAYER, mesagge);
+    const showInfo = (mesagge: string | JSX.Element) => PubSub.publish(PubSub.messages.SHOW_INFO, mesagge);
 
     const frmProveedor = useRef<FrmProveedor>(null);
 
@@ -207,7 +207,7 @@ const Proveedores = () => {
 
     const obtenerDatos = async () => {
         setCargando(true);
-        PubSub.publish('MSG_SHOW_LAYER', "Recuperando datos");
+        PubSub.publish(PubSub.messages.SHOW_LAYER, "Recuperando datos");
         try {
             const respuesta = await proveedoresApiService.getAll()
             setDatos(respuesta);
@@ -215,7 +215,7 @@ const Proveedores = () => {
             setError(err.message);
         } finally {
             setCargando(false);
-            PubSub.publish('MSG_HIDE_LAYER');
+            PubSub.publish(PubSub.messages.HIDE_LAYER);
         }
     };
 

@@ -17,7 +17,7 @@ let activeRequests = 0;
 
 const showLoader = () => {
     if (activeRequests === 0) {
-        PubSub.publish('MSG_LOADING');
+        PubSub.publish(PubSub.messages.LOADING);
     }
     activeRequests++;
 };
@@ -25,7 +25,7 @@ const showLoader = () => {
 const hideLoader = () => {
     activeRequests = Math.max(activeRequests - 1, 0);
     if (activeRequests === 0) {
-        PubSub.publish('MSG_LOADING_END');
+        PubSub.publish(PubSub.messages.LOADING_END);
     }
 };
 

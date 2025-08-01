@@ -1,12 +1,11 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import ListControl from "../../components/lists/List";
 import proveedoresApiService, { type Proveedor } from '../../services/proveedorService.js';
 
 const ListControlSamplePage = () => {
 
-    const [selected, setSelected] = useState<Proveedor | null>(null);
+    const [selected, setSelected] = useState<string[]>([]);
     const [datos, setDatos] = useState<Proveedor[]>([]);
-
 
     const obtenerDatos = async () => {
         try {
@@ -21,6 +20,14 @@ const ListControlSamplePage = () => {
         obtenerDatos();
     }, []);
 
+    const handleSelecction = useCallback((selection:string[]) => {
+        console.log(selection);
+        if(selection) 
+            setSelected(selection);
+        else
+            setSelected([]);
+    },[]);
+
     return (
         <>
             <div className="w3-container">
@@ -28,14 +35,19 @@ const ListControlSamplePage = () => {
                 <h2 className="">Ejemplo de uso de ListControl.</h2>
                 <div className="w3-container">
                     {selected && (
-                        <p className="w3-text-green w3-margin-top">Proveedor seleccionado: <strong>{selected.nombre}</strong> (ID: {selected.nif})</p>
+                        <p className="w3-text-green w3-margin-top">
+                            Proveedor seleccionado: <strong>
+                                {JSON.stringify(selected)}
+                            </strong>
+                        </p>
                     )}
                     <ListControl
                         dataSource={datos}
-                        resolver={{ text: 'nif', id: 'nif' }}
-                        onSelect={(item) => setSelected(item)}
+                        resolver={{ text: 'nif', id: 'id' }}
+                        onSelect={(item) => handleSelecction(item) }
                         listHeight="200px"
-                        value="04179642J"
+                        value={['5', '7']}
+                        multiSelect ={true}
                     />
                     <p></p>
                 </div>

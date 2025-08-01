@@ -15,7 +15,7 @@ interface ModalOptions {
 export const useModal = () => {
 
     const showModal = useCallback((options: ModalOptions) => {
-        PubSub.publish('MSG_SHOW_MODAL', {
+        PubSub.publish(PubSub.messages.SHOW_MODAL, {
             title: options.title,
             content: options.content,
             actions: options.actions ?? [],
@@ -25,7 +25,7 @@ export const useModal = () => {
         });
     }, []);
 
-    const closeModal = useCallback(() => { PubSub.publish('MSG_CLOSE_MODAL'); }, []);
+    const closeModal = useCallback(() => { PubSub.publish(PubSub.messages.CLOSE_MODAL); }, []);
 
     const showNotification = useCallback((message: ReactNode, delay: number, allowManualClose = false) => {
         showModal({
@@ -62,8 +62,8 @@ export const useModal = () => {
         });
     }, [showModal, closeModal]);
 
-    const showLoader = useCallback(() => { PubSub.publish('MSG_LOADING'); }, []);
-    const hideLoader = useCallback(() => { PubSub.publish('MSG_LOADING_END'); }, []);
+    const showLoader = useCallback(() => { PubSub.publish(PubSub.messages.LOADING); }, []);
+    const hideLoader = useCallback(() => { PubSub.publish(PubSub.messages.LOADING_END); }, []);
 
     return { showModal, closeModal, showNotification, confirm, showLoader, hideLoader };
 };

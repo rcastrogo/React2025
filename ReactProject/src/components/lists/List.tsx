@@ -1,5 +1,7 @@
 
 import { useCallback, useEffect, useRef, useState, type MouseEventHandler } from "react";
+import { usePageNavigation } from '../../hooks/useClickOutside'; 
+
 
 interface Resolver<T> {
     text: keyof T;
@@ -9,9 +11,10 @@ interface Resolver<T> {
 interface ListControlProps<T> {
     dataSource: T[];
     resolver?: Resolver<T>;
-    onSelect?: (value: T | null) => void;
-    value?: string;
-    listHeight:string
+    onSelect?: (value: string[]) => void;
+    value?: string | string[];
+    listHeight: string;
+    multiSelect?: boolean;
 }
 
 const ListControl = <T extends Record<string, any>>({
@@ -20,92 +23,145 @@ const ListControl = <T extends Record<string, any>>({
         text: 'name' as keyof T,
         id: 'id' as keyof T
     },
-    onSelect = (value: T | null) => console.log(value),
+    onSelect = (value: string[]) => console.log(value),
     value = '',
-    listHeight = ''
-
+    listHeight = '',
+    multiSelect = false
 }: ListControlProps<T>) => {
 
     const [hiddenValue, setHiddenValue] = useState('');
-    const [selectedIndex, setSelectIndex] = useState(-1);
 
-    const listRef = useRef<HTMLUListElement>(null); 
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [active, setActive] = useState(-1);
 
-    const getText = useCallback((item: any) => resolver ? item[resolver.text] : item.toString(), [resolver]);
-    const getId = useCallback((item: any) => resolver ? item[resolver.id] : item.toString(), [resolver]);
-
-    const setCurrentIndex = useCallback((index: number) => {
-        setSelectIndex(index);
-        if (index == -1) {
-            setHiddenValue('');
-            if (onSelect) onSelect(null);
-            return;
-        }
-        var target = dataSource[index];
-        setHiddenValue(getId(target));
-        if (onSelect) onSelect(target);
-    }, [getText, getId, dataSource]);
-
-
-    useEffect(() => {
-        let newIndex = -1;
-        if (value) {
-            dataSource.map((d, index) => {
-                if (value == getId(d)) newIndex = index
-            });
-        }
-        setCurrentIndex(newIndex);
-    }, [value, dataSource]);
-
-    // ====================================================================================
-    // Effect for Scrolling Active Item into View
-    // ====================================================================================
-    useEffect(() => {
-        if (selectedIndex > -1 && listRef.current) {
-            const activeDiv = listRef.current.children[selectedIndex] as HTMLElement;
-            if (activeDiv) {
-                activeDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
+    const listRef = useRef<HTMLUListElement>(null);    
+    const {calculatePageIndex} = usePageNavigation({
+        listRef,
+        totalItems: dataSource.length,
+        current: active,
     });
 
+    const getText = useCallback((item: any) => resolver ? String(item[resolver.text]) : item.toString(), [resolver]);
+    const getId = useCallback((item: any) => resolver ? String(item[resolver.id]) : item.toString(), [resolver]);
+
+    // =======================================================================
+    // Inicialización para 'value' al montar o si cambia value o dataSource
+    // =======================================================================
+    useEffect(() => {
+        if (dataSource.length) {
+            console.log('useEffect');
+            const ids = Array.isArray(value) ? value : (value ? [value] : []);
+            const targets = dataSource.reduce((acc, item) => {
+                var id = getId(item);
+                if (ids.includes(id)) acc.add(id);
+                return acc;
+            }, new Set<string>());
+            __setSelectedIds(targets);
+            return;
+        };
+    }, [dataSource]);
+    // =======================================================================
+    // Mover el foco a un elemento de la lista
+    // =======================================================================
+    const setFocusedElelemntByIndex = (index: number) => {
+        setActive(index);
+        if (listRef.current && index > -1) {
+            (listRef.current.children[index] as HTMLLIElement).focus();
+        }
+    };
+    // =======================================================================
+    // Función para notificar la selección
+    // =======================================================================
+    const raiseOnSelect = () => {
+        const targets = selectedIds.size ? [...selectedIds] : [];
+        setHiddenValue(targets.join(','));
+        onSelect(targets);
+    };
+    // =======================================================================
+    // Notificar la selección cuando 'selectedIds'cambia     
+    // =======================================================================
+    useEffect(() => {
+        raiseOnSelect();
+    }, [selectedIds]);
+    // =======================================================================
+    // Lógica de selección del elemento
+    // =======================================================================
+    const handleItemClick = (index: number) => {
+        if (dataSource.length) {
+            const target = dataSource[index];
+            const targetId = getId(target);
+
+            if (selectedIds.has(targetId))
+                selectedIds.delete(targetId);
+            else
+                selectedIds.add(targetId);
+
+            setFocusedElelemntByIndex(index);
+            __setSelectedIds(new Set(selectedIds));
+        }
+    };
+    const __setSelectedIds = (value:Set<string>) => {
+        if(value.size){
+            if(multiSelect)
+                setSelectedIds(new Set(value));
+            else {
+                const values = [...value];
+                setSelectedIds(new Set([values[values.length - 1]])); 
+            }
+        } else 
+            setSelectedIds(new Set());
+    }
     // ====================================================================================
-    // --- handleKeyDown ---
+    // handleKeyDown
     // ====================================================================================
-    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLUListElement>) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+
+        if (dataSource.length === 0) return;
+
         const { key } = e;
         if (key === 'ArrowDown') {
             e.preventDefault();
-            setCurrentIndex(Math.min(selectedIndex + 1, dataSource.length - 1));
+            setFocusedElelemntByIndex(Math.min(active + 1, dataSource.length - 1));
             return;
         }
         if (key === 'ArrowUp') {
             e.preventDefault();
-            setCurrentIndex( Math.max(selectedIndex - 1, 0));
+            setFocusedElelemntByIndex(Math.max(active - 1, 0));
+            return;
         }
-        if (key === 'Enter') {
+        if (key === 'Enter' || key === ' ') {
             e.preventDefault();
+            handleItemClick(active);
             return;
         }
         if (key === 'PageDown' || key === 'PageUp') {
             e.preventDefault();
-            if (listRef.current && dataSource.length) {
-                const listHeight = listRef.current.clientHeight;
-                const itemHeight = (listRef.current.children[0] as HTMLElement).offsetHeight;
-                if (itemHeight === 0) return;
-
-                const itemsPerPage = Math.floor(listHeight / itemHeight);
-                let newIndex = selectedIndex;
-                if (key === 'PageDown') {
-                    newIndex = Math.min(selectedIndex + itemsPerPage, dataSource.length - 1);
-                } else {
-                    newIndex = Math.max(selectedIndex - itemsPerPage, 0);
-                }
-                setCurrentIndex(newIndex);
-            }
+            const index = calculatePageIndex(key);
+            setFocusedElelemntByIndex(index);
+            return;
         }
-    }, [selectedIndex, dataSource, setCurrentIndex, hiddenValue, getId]);
-
+        if(key === 'Home'){
+            e.preventDefault();
+            setFocusedElelemntByIndex(0);
+            return;
+        }
+        if(key === 'End'){
+            e.preventDefault();
+            setFocusedElelemntByIndex(dataSource.length - 1);
+            return;
+        }
+    };
+    // ===============================================================================
+    // Effect for Scrolling Active Item into View
+    // ===============================================================================
+    useEffect(() => {
+        if (selectedIds.size == 1 && listRef.current) {
+            const targetId = selectedIds.values().next().value
+            const target = Array.from(listRef.current.children)
+                .find(li => li.id === targetId);
+            target && target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, []);
 
     return (
         <>
@@ -114,23 +170,26 @@ const ListControl = <T extends Record<string, any>>({
                 onKeyDown={handleKeyDown}
                 tabIndex={0}
                 className={'rcg-list w3-border'}
-                style={{ height: listHeight}}
-                >
+                style={{ height: listHeight }}
+            >
                 {
-                    dataSource.map((item, index) => (
-                        <li
-                            key={index}
-                            id={getId(item)}
-                            data-index={index}
-                            data-key={getId(item)}
-                            tabIndex={-1}
-                            className={index === selectedIndex ? 'autocomplete-active' : ''}
-                            onClick={() => setCurrentIndex(index)}
-                        >
-                            {getText(item)}
-                        </li>
-
-                    ))
+                    dataSource.map((item, index) => {
+                        const itemId = getId(item);
+                        const isSelected = selectedIds.has(itemId);
+                        return (
+                            <li
+                                key={itemId.id} //
+                                id={itemId}
+                                data-index={index}
+                                data-key={itemId}
+                                tabIndex={-1}
+                                className={`${isSelected ? 'autocomplete-active' : ''}`}
+                                onClick={() => { handleItemClick(index); }}
+                            >
+                                {getText(item)}
+                            </li>
+                        );
+                    })
                 }
             </ul>
         </>
@@ -138,10 +197,3 @@ const ListControl = <T extends Record<string, any>>({
 };
 
 export default ListControl;
-
-
-//  className={selectedItems.has(item.id) ? 'selected' : ''}
-//  onClick={() => handleItemClick(item)}
-//  {/* Aquí renderizamos el contenido directamente. */}
-//  {renderItem ? renderItem(item) : item.text}
-

@@ -20,7 +20,7 @@ const Dialog = () => {
     let subscriptions: (() => void)[];
     const initSubscriptions = () => {
         subscriptions = [
-            PubSub.subscribe('MSG_SHOW_MODAL', (data) => {
+            PubSub.subscribe(PubSub.messages.SHOW_MODAL, (data) => {
                 setModalState({
                     show: true,
                     title: data.title,
@@ -31,7 +31,7 @@ const Dialog = () => {
                     allowManualClose: data.allowManualClose ?? false
                 });
             }),
-            PubSub.subscribe('MSG_CLOSE_MODAL', closeModal)
+            PubSub.subscribe(PubSub.messages.CLOSE_MODAL, closeModal)
         ];
     }
     const handleKeyDown = async (e: KeyboardEvent) => {

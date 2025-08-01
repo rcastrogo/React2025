@@ -1,8 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import useDebounce from "../../hooks/useDebounce";
-import useClickOutside from "../../hooks/useClickOutside";
-
+import useClickOutside, { usePageNavigation } from "../../hooks/useClickOutside";
 
 interface AutoCompleteControlProps<T> {
     onFetchSuggestions: (inputValue: string) => Promise<T[]>;
@@ -33,6 +32,11 @@ function AutoCompleteControl<T>({
 
     const wrapperRef = useRef(null);
     const listRef = useRef<HTMLDivElement>(null);
+    const {calculatePageIndex} = usePageNavigation({
+        listRef,
+        totalItems: suggestions.length,
+        current: currentFocus,
+    });
 
     // ====================================================================================
     // KeyDown 
@@ -65,20 +69,9 @@ function AutoCompleteControl<T>({
         }
         if (key === 'PageDown' || key === 'PageUp') {
             e.preventDefault();
-            if (listRef.current && suggestions.length) {
-                const listHeight = listRef.current.clientHeight;
-                const itemHeight = (listRef.current.children[0] as HTMLElement).offsetHeight;
-                if (itemHeight === 0) return;
-
-                const itemsPerPage = Math.floor(listHeight / itemHeight);
-                let newIndex = currentFocus;
-                if (key === 'PageDown') {
-                    newIndex = Math.min(currentFocus + itemsPerPage, suggestions.length - 1);
-                } else {
-                    newIndex = Math.max(currentFocus - itemsPerPage, 0);
-                }
-                setCurrentFocus(newIndex);
-            }
+            const index = calculatePageIndex(key);
+            setCurrentFocus(index);
+            return;
         }
     };
 
@@ -158,8 +151,8 @@ function AutoCompleteControl<T>({
         const num = suggestions.length > 0 ? suggestions.length : 3;
         return Array.from({ length: num }, (_, i) => (
             <div key={`skeleton-${i}`}>
-                <div className="skeleton" style={{ height: '20px', width: '150px', marginBottom : '4px' }}></div>
-                <div className="skeleton" style={{ height: '20px', width: '100%', marginBottom : '4px' }}></div>
+                <div className="skeleton" style={{ height: '20px', width: '150px', marginBottom: '4px' }}></div>
+                <div className="skeleton" style={{ height: '20px', width: '100%', marginBottom: '4px' }}></div>
             </div>
         ));
     };
@@ -184,7 +177,7 @@ function AutoCompleteControl<T>({
                     ) : (
                         suggestions.map((item, index) => (
                             <div
-                                key={index} 
+                                key={index}
                                 data-index={index}
                                 className={index === currentFocus ? 'autocomplete-active' : ''}
                                 onClick={() => handleSuggestionClick(item)}
