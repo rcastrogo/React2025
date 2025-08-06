@@ -6,10 +6,9 @@
   <script type="text/javascript">
 
     const fullPath = window.location.pathname + window.location.search + window.location.hash;
-
-    sessionStorage.redirect = fullPath;
-
+    sessionStorage.setItem('reac-app-2025.redirect', fullPath);
     window.location.replace("/React2025/");
+
   </script>
 </head>
 <body>
