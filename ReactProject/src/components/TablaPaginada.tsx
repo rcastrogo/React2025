@@ -1,8 +1,13 @@
 ﻿
 import React, { useState, useEffect, useMemo } from 'react';
 import PubSub from './Pubsub';
+import { type NotificationData } from '../components/Notifications/NotificationPanel';
+import { NOTIFICATION_TYPES } from "../constants/appConfig";
 import { useModal } from '../hooks/useModal';
 import type { Proveedor } from '../services/proveedorService';
+import { appConfig } from '../services/configService';
+import { formatString as format } from '../utils/core';
+
 
 // Datos de la tabla
 export interface TableDataItem {
@@ -46,7 +51,6 @@ interface TablaPaginadaProps<T extends TableDataItem> {
 // Tipo para el estado de ordenación
 type SortDirection = 'asc' | 'desc' | null;
 
-const PAGE_SIZE = 'PageSize';
 
 const TablaPaginada = <T extends TableDataItem>(
     {
@@ -63,11 +67,13 @@ const TablaPaginada = <T extends TableDataItem>(
         loading = false
     }: TablaPaginadaProps<T>
 ) => {
+    const PAGE_SIZE_KEY = format('{0}.PageSize', options.entity || 'table');
+
     const [cargando, setCargando] = useState(loading);
     const [datos, setDatos] = useState<T[]>(datosIniciales);
     const [paginaActual, setPaginaActual] = useState<number>(1);
     const [elementosPorPagina, setElementosPorPagina] = useState<number>(() => {
-        return ~~(localStorage.getItem(PAGE_SIZE) || elementosPorPaginaInicial);
+        return ~~(appConfig.read(PAGE_SIZE_KEY) || elementosPorPaginaInicial);
     });
     const [seleccionados, setSeleccionados] = useState<Set<string | number>>(new Set()); // IDs de los elementos seleccionados
     const [columnaOrdenacion, setColumnaOrdenacion] = useState<keyof T | null>(null);
@@ -102,9 +108,7 @@ const TablaPaginada = <T extends TableDataItem>(
             return datosFiltrados;
         const sorter = options.columns.filter(c => c.key === columnaOrdenacion)[0].sorter;
         const sorted = [...datosFiltrados].sort((a, b) => {
-            return direccionOrdenacion === 'asc' ?
-                sorter(a[columnaOrdenacion], b[columnaOrdenacion]) :
-                sorter(b[columnaOrdenacion], a[columnaOrdenacion]);
+            return direccionOrdenacion === 'asc' ? sorter(a, b) : sorter(b, a);
         });
         return sorted;
     }, [datosFiltrados, columnaOrdenacion, direccionOrdenacion]);
@@ -143,7 +147,7 @@ const TablaPaginada = <T extends TableDataItem>(
         const target = e.target as HTMLButtonElement;
         const value = parseInt(target.textContent || elementosPorPaginaInicial.toString());
         setElementosPorPagina(value);
-        localStorage.setItem(PAGE_SIZE, value.toString());
+        appConfig.write(PAGE_SIZE_KEY, value.toString());
         setPaginaActual(1);
     };
 
@@ -271,7 +275,7 @@ const TablaPaginada = <T extends TableDataItem>(
         }
         const result = await confirm(
             `¿Estás seguro de que quieres borrar ${seleccionados.size} registro(s) seleccionado(s)?`,
-            'Borrar proveedores'
+            'Borrar elementos'
         );
         if (result) {
             setCargando(true);
@@ -282,7 +286,15 @@ const TablaPaginada = <T extends TableDataItem>(
                 if (elementosActuales.length === seleccionados.size && paginaActual > 1) {
                     setPaginaActual(paginaActual - 1);
                 }
-                showNotification(seleccionados.size + ' elemento(s) eliminados!', 1500);
+                const message = format('{size} elemento(s) eliminados!', seleccionados);
+                PubSub.publish(PubSub.messages.SHOW_NOTIFICATION, {
+                    message: message,
+                    type: NOTIFICATION_TYPES.TEXT,
+                    duration: 5500,
+                    id: ''
+                } as NotificationData);
+
+                //showNotification(message, 1500);
                 setCargando(false);
             });
         }
@@ -341,11 +353,11 @@ const TablaPaginada = <T extends TableDataItem>(
     // CustomActions
     // ============================================================================================================
     const handleCustomAction = (action: string) => {
-        if(!action.startsWith('#')) setCargando(true);
+        if (!action.startsWith('#')) setCargando(true);
         options.actionResolver?.doAction &&
             options.actionResolver?.doAction({ action, selected: seleccionados, datos }, (result: any) => {
                 setDatos(result);
-                if(!action.startsWith('#')) setCargando(false);
+                if (!action.startsWith('#')) setCargando(false);
             });
     }
 
@@ -354,7 +366,7 @@ const TablaPaginada = <T extends TableDataItem>(
     const skeletonRows = Array.from({ length: elementosPorPagina }, (_, i) => (
         <tr key={`skeleton-${i}`}>
             <td><div className="skeleton" /></td>
-            {options.columns.map(column => <td><div className="skeleton" /></td>)}
+            {options.columns.map(column => <td><div id={column.title} className="skeleton" /></td>)}
         </tr>
     ));
 
@@ -367,11 +379,27 @@ const TablaPaginada = <T extends TableDataItem>(
                 <button className="w3-button w3-left w3-border-right" title="Cargar" onClick={handleRefresh}>
                     <i className={"w3-xlarge w3-left fa fa-refresh" + (cargando == true ? ' w3-spin' : '')}></i>
                 </button>
-                <span className="w3-left pol-paginator-label">
-                    {options.entity}: {datos.length} elementos
-                    {datosFiltrados.length != datos.length && ` (${datosFiltrados.length} filtrados/s)`}
-                    {seleccionados.size > 0 && ` (${seleccionados.size} seleccionado/s)`} - Página {paginaActual}/{totalPaginas}
-                </span>
+
+                <div>
+                     <span className="w3-left pol-paginator-label">
+                        {options.entity}: {datos.length} elementos
+                        {datosFiltrados.length != datos.length && ` (${datosFiltrados.length} filtrados/s)`}
+                        {seleccionados.size > 0 && ` (${seleccionados.size} seleccionado/s)`} - Página {paginaActual}/{totalPaginas}
+                    </span>
+                    <div className="w3-left w3-border-left pol-paginator-search">
+                        <input
+                            type="text"
+                            className="w3-right pol-paginator-search-input"
+                            placeholder="Buscar..."
+                            value={textoBusqueda}
+                            onChange={(e) => {
+                                setTextoBusqueda(e.target.value);
+                                setPaginaActual(1);
+                            }}
+                        />
+                    </div>               
+                </div>
+
                 <div data-menu-wrapper="" className="w3-dropdown-click w3-right">
                     <button className="w3-button w3-xlarge w3-right fa fa-caret-down w3-border-left w3-border-right" onClick={showHideMenu} style={{ padding: '7px 4px' }}>
                     </button>
@@ -379,14 +407,14 @@ const TablaPaginada = <T extends TableDataItem>(
                         {options.contextMenuItems?.size! > 0 && (
                             <>
                                 {Array.from(options.contextMenuItems!.entries())
-                                      .filter(e => e[0].startsWith('#'))
-                                      .map(([accion, titulo]) => (
-                                    <button
-                                        key={accion}
-                                        className="w3-bar-item w3-button"
-                                        disabled={datosFiltrados.length === 0}
-                                        onClick={() => handleCustomAction(accion)}>{titulo}</button>
-                                ))}
+                                    .filter(e => e[0].startsWith('#'))
+                                    .map(([accion, titulo]) => (
+                                        <button
+                                            key={accion}
+                                            className="w3-bar-item w3-button"
+                                            disabled={datosFiltrados.length === 0}
+                                            onClick={() => handleCustomAction(accion)}>{titulo}</button>
+                                    ))}
                                 <div className="menu-item-separator"></div>
                             </>
                         )}
@@ -410,23 +438,23 @@ const TablaPaginada = <T extends TableDataItem>(
                             <>
                                 <div className="menu-item-separator"></div>
                                 {Array.from(options.contextMenuItems!.entries())
-                                      .filter(e => !e[0].startsWith('#'))
-                                      .map(([accion, titulo]) => (
-                                    <button
-                                        key={accion}
-                                        className="w3-bar-item w3-button"
-                                        disabled={seleccionados.size === 0}
-                                        onClick={() => handleCustomAction(accion)}>{titulo}</button>
-                                ))}
+                                    .filter(e => !e[0].startsWith('#'))
+                                    .map(([accion, titulo]) => (
+                                        <button
+                                            key={accion}
+                                            className="w3-bar-item w3-button"
+                                            disabled={seleccionados.size === 0}
+                                            onClick={() => handleCustomAction(accion)}>{titulo}</button>
+                                    ))}
                             </>
                         )}
                     </div>
                 </div>
-                <button className="w3-button w3-xlarge w3-right fa fa-plus w3-border-left" title="Insertar" onClick={handleInsertar}></button>
-                <button className="w3-button w3-xlarge w3-right fa fa-trash w3-border-left" title="Eliminar" onClick={handleDeleteSelected} disabled={seleccionados.size === 0}></button>
-                <button className="w3-button w3-xlarge w3-right fa fa-edit w3-border-left" title="Editar" onClick={handleEditSelected} disabled={seleccionados.size !== 1}></button>
-                <button className="w3-button w3-right w3-border-left" onClick={irAUltimaPagina} disabled={paginaActual === totalPaginas}>&#10095;&#10095;</button>
-                <button className="w3-button w3-right w3-border-left" onClick={irASiguientePagina} disabled={paginaActual === totalPaginas}>&#10095;</button>
+                <button className="w3-button pol w3-xlarge w3-right fa fa-plus w3-border-left" title="Insertar" onClick={handleInsertar}></button>
+                <button className="w3-button pol w3-xlarge w3-right fa fa-trash w3-border-left" title="Eliminar" onClick={handleDeleteSelected} disabled={seleccionados.size === 0}></button>
+                <button className="w3-button pol w3-xlarge w3-right fa fa-edit w3-border-left" title="Editar" onClick={handleEditSelected} disabled={seleccionados.size !== 1}></button>
+                <button className="w3-button pol w3-right w3-border-left" onClick={irAUltimaPagina} disabled={paginaActual === totalPaginas}>&#10095;&#10095;</button>
+                <button className="w3-button pol w3-right w3-border-left" onClick={irASiguientePagina} disabled={paginaActual === totalPaginas}>&#10095;</button>
                 <input
                     type="number"
                     className="w3-right w3-center"
@@ -437,33 +465,19 @@ const TablaPaginada = <T extends TableDataItem>(
                     onChange={handleCambioPaginaInput}
                     disabled={1 === totalPaginas}
                 />
-                <button className="w3-button w3-right w3-border-left w3-border-right" onClick={irAPaginaAnterior} disabled={paginaActual === 1}>&#10094;</button>
-                <button className="w3-button w3-right w3-border-left" onClick={irAPrimeraPagina} disabled={paginaActual === 1}>&#10094;&#10094;</button>
-                <div className="w3-right w3-border-left" style={{ margin: 0, padding: 0 }}>
-                    <input
-                        type="text"
-                        className="w3-right"
-                        style={{ padding: '8px', border: 'none' }}
-                        placeholder="Buscar..."
-                        value={textoBusqueda}
-                        onChange={(e) => {
-                            setTextoBusqueda(e.target.value);
-                            setPaginaActual(1);
-                        }}
-                    />
-                </div>
+                <button className="w3-button pol w3-right w3-border-left w3-border-right" onClick={irAPaginaAnterior} disabled={paginaActual === 1}>&#10094;</button>
+                <button className="w3-button pol w3-right w3-border-left" onClick={irAPrimeraPagina} disabled={paginaActual === 1}>&#10094;&#10094;</button>
             </div>
 
             {/* Tabla */}
             <table className="w3-table-all pol-table">
                 <thead>
                     <tr>
-                        <th style={{ width: '1%' }}>
+                        <th style={{ width: '1%' }} className="w3-border-right">
                             <input
                                 type="checkbox"
                                 onChange={(e) => handleSeleccionarTodo(e.target.checked)}
                                 checked={seleccionados.size === datosFiltrados.length && datosFiltrados.length > 0}
-                                // Indeterminate state if some but not all are selected
                                 ref={el => {
                                     if (el) {
                                         el.indeterminate = seleccionados.size > 0 &&

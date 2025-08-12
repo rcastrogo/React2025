@@ -5,7 +5,7 @@
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
-    <AssemblyName>AngulaApp.Dal</AssemblyName>
+    <AssemblyName>ReactApp.Dal</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -1,0 +1,69 @@
+const serverResponse = {
+    result: 'ok',
+    response: { someData: 'Datos validados' },
+    actions: [
+        { type: 'error', payload: 'El NIF no es válido. ¡Revisa el formato!' },
+        { type: 'focus', payload: 'input[name=nif]' },
+        { type: 'alert', payload: 'Validación con errores.' },
+        {
+            type: 'publish',
+            payload: {
+                topic: 'SHOW_INFO',
+                data: 'La validación ha fallado, pero la solicitud ha sido procesada.'
+            }
+        },
+        {
+            type: 'publish',
+            payload: {
+                topic: 'SHOW_MODAL',
+                data: {
+                    title: 'ReactApp',
+                    content: 'Error en la validación!',
+                    showCloseButton: true,
+                    allowManualClose: true
+                }
+            }
+        },
+    ]
+};
+return {
+    result: 'ok',
+    response: {},
+    actions: [
+        //{ type : 'error', payload : 'Mensaje de error' },
+        //{ type : 'focus' , payload : '[name=nif]'},
+        //{ type : 'alert' , payload : 'Código incorrecto'},
+        {
+            type: 'publish__',
+            payload: {
+                topic: 'SHOW_MODAL',
+                data: {
+                    title: 'ReactApp',
+                    content: <p>Error en la validación!</p>,
+                    showCloseButton: true,
+                    allowManualClose: true
+                }
+            }
+        },
+        {
+            type: 'publish__',
+            payload: {
+                topic: 'SHOW_INFO',
+                data: <p>Error en la validación!</p>
+            }
+        },
+        {
+            type: 'publish__',
+            payload: { topic: 'SHOW_MOBILE_MENU' }
+        },
+        {
+            type: 'publish__',
+            payload: { topic: 'AUTH_LOGOUT' }
+        },
+        {
+            type: 'navigate',
+            payload: '/about'
+        }
+
+    ],
+};

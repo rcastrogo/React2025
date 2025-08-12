@@ -40,9 +40,18 @@ namespace WebApi.Core.Logging
                                         Environment.NewLine +
                                         exception.ToString();
 
-      if(_settings.LogToConsole == true) Console.Write(message);
-      if(_settings.LogToFile == true) File.AppendAllText(Path.Combine(Environment.CurrentDirectory, $"Logs\\{DateTime.Now.ToString("yyyyMMdd")}.log.txt"), message);
+      if (_settings.LogToConsole == true) Console.Write(message);
+      if (_settings.LogToFile == true)
+      {
+        try
+        {
+          File.AppendAllText(Path.Combine(Environment.CurrentDirectory, $"Logs\\{DateTime.Now.ToString("yyyyMMdd")}.log.txt"), message);
+        }
+        catch (Exception)
+        {
 
+        }
+      }
     }
 
     private class NoopDisposable : IDisposable

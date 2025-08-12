@@ -1,5 +1,6 @@
 ﻿
 import { useNavigate } from "react-router-dom";
+import { APP_SPLASH_IMAGE, APP_SPLASH_TITLE } from "../constants";
 
 const NoPage = () => {
 
@@ -8,14 +9,14 @@ const NoPage = () => {
     return (
             <div className="w3-display-middle w3-center w3-padding-large">
                 <img
-                    src="https://icon.icepanel.io/Technology/svg/Vite.js.svg"
+                    src={APP_SPLASH_IMAGE}
                     alt="App Logo"
                     className="w3-image w3-round-xxlarge w3-margin-bottom w3-animate-zoom"
                     style={{ width: '150px', height: '150px', objectFit: 'cover' }}
                 />
 
                 <h1 className="w3-jumbo w3-animate-top pol-app-title">
-                    React-App
+                    {APP_SPLASH_TITLE}
                 </h1>
 
                 <h3 className="">

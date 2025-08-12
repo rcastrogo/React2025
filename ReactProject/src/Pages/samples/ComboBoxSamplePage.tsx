@@ -1,12 +1,8 @@
 ﻿import { useEffect, useState } from "react";
-import ComboBoxCntrol from "../../components/lists/ComboBox";
+import ComboBoxCntrol, { type option } from "../../components/lists/ComboBox";
 import ListControl from "../../components/lists/List";
 import proveedoresApiService, { type Proveedor } from '../../services/proveedorService.js';
 
-interface MyDataItem {
-    id: string | number;
-    name: string;
-}
 
 interface ProgrammingLanguageItem {
     value: string;
@@ -16,50 +12,50 @@ interface ProgrammingLanguageItem {
 
 const ComboBoxSamplePage = () => {
 
-    const [selectedCountry, setSelectedCountry] = useState<MyDataItem | null>(null);
-    const [selectedCity, setSelectedCity] = useState<MyDataItem | null>(null);
-    const [selectedProgrammingLanguage, setSelectedProgrammingLanguage] = useState<ProgrammingLanguageItem | null>(null);
+    const [selectedCountry, setSelectedCountry] = useState('');
+    const [selectedCity, setSelectedCity] = useState('');
+    const [selectedProgrammingLanguage, setSelectedProgrammingLanguage] = useState('');
 
     const [datos, setDatos] = useState<Proveedor[]>([]);
 
-    const handleCountrySelect = (item: MyDataItem | null) => {
-        setSelectedCountry(item);
-        console.log('País seleccionado:', item);
+    const handleCountrySelect = (value: string) => {
+        setSelectedCountry(value);
+        console.log('País seleccionado:', value);
     };
 
-    const handleCitySelect = (item: MyDataItem | null) => {
-        setSelectedCity(item);
-        console.log('Ciudad seleccionada:', item);
+    const handleCitySelect = (value: string) => {
+        setSelectedCity(value);
+        console.log('Ciudad seleccionada:', value);
     };
 
-    const handleProgrammingLanguageSelect = (item: ProgrammingLanguageItem | null) => {
-        setSelectedProgrammingLanguage(item);
-        console.log('Lenguaje seleccionado:', item);
+    const handleProgrammingLanguageSelect = (value: string) => {
+        setSelectedProgrammingLanguage(value);
+        console.log('Lenguaje seleccionado:', value);
     };
 
-    const countries: MyDataItem[] = [
-        { id: 'ES', name: 'España' },
-        { id: 'MX', name: 'México' },
-        { id: 'AR', name: 'Argentina' },
-        { id: 'CO', name: 'Colombia' },
-        { id: 'CL', name: 'Chile' },
-        { id: 'PE', name: 'Perú' },
-        { id: 'VE', name: 'Venezuela' },
-        { id: 'EC', name: 'Ecuador' },
-        { id: 'GT', name: 'Guatemala' },
-        { id: 'US', name: 'Estados Unidos' },
-        { id: 'CA', name: 'Canadá' },
+    const countries: option[] = [
+        { value: 'ES', label: 'España' },
+        { value: 'MX', label: 'México' },
+        { value: 'AR', label: 'Argentina' },
+        { value: 'CO', label: 'Colombia' },
+        { value: 'CL', label: 'Chile' },
+        { value: 'PE', label: 'Perú' },
+        { value: 'VE', label: 'Venezuela' },
+        { value: 'EC', label: 'Ecuador' },
+        { value: 'GT', label: 'Guatemala' },
+        { value: 'US', label: 'Estados Unidos' },
+        { value: 'CA', label: 'Canadá' },
     ];
 
-    const cities: MyDataItem[] = [
-        { id: 'MD', name: 'Madrid' },
-        { id: 'BCN', name: 'Barcelona' },
-        { id: 'VLC', name: 'Valencia' },
-        { id: 'SFC', name: 'Sevilla' },
-        { id: 'NY', name: 'Nueva York' },
-        { id: 'LA', name: 'Los Ángeles' },
-        { id: 'CDMX', name: 'Ciudad de México' },
-        { id: 'BOG', name: 'Bogotá' },
+    const cities: option[] = [
+        { value: 'MD',  label: 'Madrid' },
+        { value: 'BCN', label: 'Barcelona' },
+        { value: 'VLC', label: 'Valencia' },
+        { value: 'SFC', label: 'Sevilla' },
+        { value: 'NY',  label: 'Nueva York' },
+        { value: 'LA',  label: 'Los Ángeles' },
+        { value: 'CDMX', label: 'Ciudad de México' },
+        { value: 'BOG',  label: 'Bogotá' },
     ];
 
     const programmingLanguages: ProgrammingLanguageItem[] = [
@@ -97,12 +93,12 @@ const ComboBoxSamplePage = () => {
                         <h2 className="w3-large w3-text-blue">Selecciona un País</h2>
                         <p className="w3-small w3-text-grey">Un ComboBox básico que utiliza las propiedades por defecto `_id` y `_nombre` para resolver los datos.</p>
                         {selectedCountry && (
-                            <p className="w3-text-green w3-margin-top">País seleccionado: <strong>{selectedCountry.name}</strong> (ID: {selectedCountry.id})</p>
+                            <p className="w3-text-green w3-margin-top">País seleccionado: <strong>{selectedCountry}</strong> (ID: {selectedCountry})</p>
                         )}
-                        <ComboBoxCntrol<MyDataItem>
-                            dataSource={countries}
-                            onSelect={handleCountrySelect}
-                            value="ES"
+                        <ComboBoxCntrol
+                            options={countries}
+                            onChange={handleCountrySelect}
+                            value={selectedCountry}
                         />
                         <p></p>
                     </div>
@@ -113,12 +109,12 @@ const ComboBoxSamplePage = () => {
                         <h2 className="w3-large w3-text-blue">Selecciona una Ciudad</h2>
                         <p className="w3-small w3-text-grey">Otro ComboBox con un conjunto de datos diferente. Funciona de la misma manera que el anterior.</p>
                         {selectedCity && (
-                            <p className="w3-text-green w3-margin-top">Ciudad seleccionada: <strong>{selectedCity.name}</strong> (ID: {selectedCity.id})</p>
+                            <p className="w3-text-green w3-margin-top">Ciudad seleccionada: <strong>{selectedCity}</strong> (ID: {selectedCity}</p>
                         )}
-                        <ComboBoxCntrol<MyDataItem>
-                            dataSource={cities}
-                            onSelect={handleCitySelect}
-                            value="LA"
+                        <ComboBoxCntrol
+                            options={cities}
+                            onChange={handleCitySelect}
+                            value={selectedCity}
                         />
                         <p></p>
                     </div>
@@ -130,13 +126,12 @@ const ComboBoxSamplePage = () => {
                         <h2 className="w3-large w3-text-blue">Lenguaje de Programación</h2>
                         <p className="w3-small w3-text-grey">Este ComboBox usa un `resolver` personalizado porque sus objetos tienen propiedades diferentes (`value` y `label`).</p>
                         {selectedProgrammingLanguage && (
-                            <p className="w3-text-green w3-margin-top">Lenguaje seleccionado: <strong>{selectedProgrammingLanguage.label}</strong> (ID: {selectedProgrammingLanguage.value})</p>
+                            <p className="w3-text-green w3-margin-top">Lenguaje seleccionado: <strong>{selectedProgrammingLanguage}</strong> (ID: {selectedProgrammingLanguage})</p>
                         )}
-                        <ComboBoxCntrol<ProgrammingLanguageItem>
-                            dataSource={programmingLanguages}
-                            resolver={{ text: 'label', id: 'value' }}
-                            onSelect={handleProgrammingLanguageSelect}
-                            value="JS"
+                        <ComboBoxCntrol
+                            options={programmingLanguages}                            
+                            onChange={handleProgrammingLanguageSelect}
+                            value={selectedProgrammingLanguage}
                         />
                         <p></p>
                     </div>

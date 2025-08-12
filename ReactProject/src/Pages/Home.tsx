@@ -15,7 +15,6 @@ interface SamplePageConfig {
     component: ComponentType<any>;
 }
 
-// Lista de tus páginas de ejemplo
 const samplePages: SamplePageConfig[] = [
     {
         id: 'report-viewer-basic',
@@ -55,12 +54,10 @@ const samplePages: SamplePageConfig[] = [
     },
 ];
 
-
 const Home = () => {
 
     const [ActiveSampleComponent, setActiveSampleComponent] = useState<ComponentType<any> | null>(null);
     const listRef = useRef<HTMLUListElement>(null);
-
 
     useEffect(() => {
 
@@ -93,41 +90,41 @@ const Home = () => {
 
 
     return (
-        <>     
-           <div className="w3-container">
-            <h2 className="">Página principal</h2>
-            <div className="pol-separator-line"></div>
-            <div className="w3-panel w3-border">
-                <h4 className="w3-center">Páginas de ejemplo</h4>
-                <ul className="w3-ul w3-border-top w3-hoverable" ref={listRef}>
-                    <li
-                        className="w3-bar w3-white w3-hover-light-grey w3-quarter"
-                        onClick={() => setActiveSampleComponent(null)}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <div className="w3-bar-item">
-                            <span className="w3-large">Ocultar Todos los Ejemplos</span><br />
-                            <span>No mostrar ningún informe de ejemplo.</span>
-                        </div>
-                    </li>
-
-                    {samplePages.map((page) => (
+        <>
+            <div className="w3-container">
+                <h2 className="">Página principal</h2>
+                <div className="pol-separator-line"></div>
+                <div className="w3-panel w3-border">
+                    <h4 className="w3-center">Páginas de ejemplo</h4>
+                    <ul className="w3-ul w3-border-top w3-hoverable" ref={listRef}>
                         <li
-                            key={page.id}
                             className="w3-bar w3-white w3-hover-light-grey w3-quarter"
-                            onClick={() => setActiveSampleComponent(() => page.component)}
+                            onClick={() => setActiveSampleComponent(null)}
                             style={{ cursor: 'pointer' }}
                         >
                             <div className="w3-bar-item">
-                                <span className="w3-large">{page.title}</span><br />
-                                <span>{page.description}</span>
+                                <span className="w3-large">Ocultar Todos los Ejemplos</span><br />
+                                <span>No mostrar ningún informe de ejemplo.</span>
                             </div>
                         </li>
-                    ))}
-                </ul>
+
+                        {samplePages.map((page) => (
+                            <li
+                                key={page.id}
+                                className="w3-bar w3-white w3-hover-light-grey w3-quarter"
+                                onClick={() => setActiveSampleComponent(() => page.component)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <div className="w3-bar-item">
+                                    <span className="w3-large">{page.title}</span><br />
+                                    <span>{page.description}</span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="pol-separator-line" style={{ marginTop: '20px' }}></div>
             </div>
-            <div className="pol-separator-line" style={{ marginTop: '20px' }}></div>
-        </div>
             <div className="" style={{ height: '400px', overflow: 'auto' }}>
                 {ActiveSampleComponent ? (
                     <ActiveSampleComponent />
@@ -136,7 +133,7 @@ const Home = () => {
                         Selecciona un elemento de la lista para visualizar la página correspondiente.
                     </p>
                 )}
-            </div>     
+            </div>
         </>
     );
 

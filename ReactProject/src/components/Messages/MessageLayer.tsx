@@ -1,4 +1,5 @@
 
+import { useNavigate } from 'react-router-dom';
 import PubSub from '../Pubsub';
 import './MessageLayer.css';
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ const MessageLayer = () => {
     const [islayerVisible, setLayerVisible] = useState(false);
     const [message, setLayerMessage] = useState("");
     const [zIndex, setZIndex]  = useState(zindex);
+    const navigate = useNavigate();
 
     let subscriptions: (() => void)[];
     const initSubscriptions = () => {
@@ -32,15 +34,17 @@ const MessageLayer = () => {
                 setLayerVisible(false);
                 setLayerMessage('');
                 setZIndex(0);
-            })
+            }),
+            PubSub.subscribe(PubSub.messages.NAVIGATE, (target) => navigate(target))
         ];
     }
 
 
     useEffect(() => {
+        console.log('MessageLayer.useEffect()');
         initSubscriptions();
         return () => subscriptions.forEach(s => s());
-    });
+    }, []);
 
     return (
         <>

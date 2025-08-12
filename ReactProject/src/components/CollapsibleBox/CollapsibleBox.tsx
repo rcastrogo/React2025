@@ -64,7 +64,7 @@ const CollapsibleBox: React.FC<CollapsibleBoxProps> = ({
 
             <div
                 ref={bodyRef}
-                className="w3-border-top"
+                className="w3-border-top collapsible-box-container"
                 style={bodyStyle}
             >
                 {children || initialContent}

@@ -2,11 +2,12 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { appConfig } from './services/configService.ts';
 
 
-const redirect = sessionStorage.redirect;
+const redirect = appConfig.read('redirect');
 if (redirect) {
-  sessionStorage.removeItem('redirect');
+  appConfig.write('redirect', '');
   window.history.replaceState(null, '', redirect);
 }
 

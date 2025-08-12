@@ -1,7 +1,7 @@
 ﻿
 import React, { useCallback, useState } from 'react';
 import authService from '../services/authService';
-
+import CreditsScreen from '../components/forms/CreditsScreen';
 
 function LoginPage() {
 
@@ -22,8 +22,8 @@ function LoginPage() {
         if (result.success) {
             setMessage(
                 <>
-                    <i className="w3-xlarge fa fa-check animated-check-icon"> </i> 
-                    <span className="animated-check-icon"> Acceso concedido!</span> 
+                    <i className="w3-xlarge fa fa-check animated-check-icon"> </i>
+                    <span className="animated-check-icon"> Acceso concedido!</span>
                 </>
             )
         } else {
@@ -49,6 +49,17 @@ function LoginPage() {
             className="w3-display-container w3-teal"
             style={{ height: '100vh', width: '100vw', position: 'fixed', top: 0, left: 0, zIndex: 999 }}
         >
+            <CreditsScreen
+                gameWidth={1000}
+                gameHeight={1000}
+                particleSize={.8325}
+                particleDensity={1.525} // Menor valor = más partículas
+                metaballCount={8} // Más metaballs
+                textScale={30}
+                fadeDurationEnter={500}
+                fadeDurationLeave={200}
+                titleText="R e a c t"
+            />
             <div className="w3-display-middle w3-center w3-animate-opacity" style={{ minWidth: '300px', maxWidth: '500px', width: '50%' }}>
                 <div className="w3-card-4 w3-white w3-round-large w3-padding-large">
                     <img

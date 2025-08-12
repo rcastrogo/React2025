@@ -16,9 +16,49 @@ button.collapsible-box-header {
   border-radius: 14px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
-
 }
 
-button.collapsible-box-header:hover {
-  background: #e0e0e0;
+  button.collapsible-box-header:hover {
+    background: #e0e0e0;
+  }
+
+.pol-collapsible-box-plain button.collapsible-box-header {
+  padding: 12px;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  background-color: transparent;
+  border-radius: 0;
+  border: none !important;
+}
+
+.pol-collapsible-box-plain button[aria-expanded=true]{
+  
+}
+.pol-collapsible-box-plain button[aria-expanded=false]{
+  border-bottom: solid 1px silver !important;
+}
+
+.pol-collapsible-box-plain button.collapsible-box-header:hover {
+  background-color:white;
+}
+
+.pol-collapsible-box-plain .collapsible-box-container{
+  background-color: white !important;
+  border:none !important;
+  border-bottom: solid 1px silver !important;
+}
+
+.pol-collapsible-box-plain .collapsible-box {
+  border: none !important;
+  background-color: white;
+}
+
+
+@media (max-width: 660px) {
+
+  button[data-entry]{
+    width:48% !important;
+  }
+
 }

@@ -1,0 +1,309 @@
+CREATE TABLE [dbo].[Usuario](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Nif] [nvarchar](50) NOT NULL,
+	[Nombre] [nvarchar](50) NOT NULL,
+	[Descripcion] [nvarchar](50) NOT NULL,
+	[FechaDeAlta] [datetime] NOT NULL,
+ CONSTRAINT [PK_Usuario] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+CREATE TABLE Departamentos (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo VARCHAR(10) NOT NULL UNIQUE,
+    Descripcion VARCHAR(50) NOT NULL
+);
+
+-- Inserción de datos en Departamentos
+INSERT INTO Departamentos (Codigo, Descripcion) VALUES
+('FIN', 'Finanzas'),
+('MKT', 'Marketing'),
+('RH', 'Recursos Humanos'),
+('IT', 'Tecnología de la Información'),
+('VENT', 'Ventas'),
+('OP', 'Operaciones'),
+('ADM', 'Administración'),
+('LOG', 'Logística'),
+('CAL', 'Control de Calidad'),
+('PRD', 'Producción'),
+('INV', 'Investigación y Desarrollo'),
+('SERV', 'Servicios al Cliente'),
+('JUR', 'Jurídico'),
+('CONT', 'Contabilidad'),
+('MNT', 'Mantenimiento');
+
+-- Creación de la tabla Paises
+CREATE TABLE Paises (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo CHAR(3) NOT NULL UNIQUE,
+    Descripcion VARCHAR(50) NOT NULL,
+    PrefijoTelefonico VARCHAR(5)
+);
+
+-- Inserción de datos en Paises
+INSERT INTO Paises (Codigo, Descripcion, PrefijoTelefonico) VALUES
+('ARG', 'Argentina', '+54'),
+('BRA', 'Brasil', '+55'),
+('CHL', 'Chile', '+56'),
+('COL', 'Colombia', '+57'),
+('ESP', 'España', '+34'),
+('MEX', 'México', '+52'),
+('PER', 'Perú', '+51'),
+('USA', 'Estados Unidos', '+1'),
+('CAN', 'Canadá', '+1'),
+('GBR', 'Reino Unido', '+44'),
+('FRA', 'Francia', '+33'),
+('DEU', 'Alemania', '+49'),
+('ITA', 'Italia', '+39'),
+('JPN', 'Japón', '+81'),
+('AUS', 'Australia', '+61'),
+('RUS', 'Rusia', '+7');
+
+
+-- Creación de la tabla TiposDocumento
+CREATE TABLE TiposDocumento (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo VARCHAR(10) NOT NULL UNIQUE,
+    Descripcion VARCHAR(50) NOT NULL,
+    Activo BIT DEFAULT 1
+);
+
+-- Inserción de datos en TiposDocumento
+INSERT INTO TiposDocumento (Codigo, Descripcion, Activo) VALUES
+('DNI', 'Documento Nacional de Identidad', 1),
+('PAS', 'Pasaporte', 1),
+('CE', 'Cédula de Extranjería', 1),
+('RUC', 'Registro Único de Contribuyentes', 1),
+('LIB', 'Libreta Militar', 0),
+('LIC', 'Licencia de Conducir', 1),
+('TAR', 'Tarjeta de Identidad', 1),
+('TID', 'Tarjeta de Identificación', 1),
+('NIF', 'Número de Identificación Fiscal', 1),
+('TSS', 'Tarjeta de Seguridad Social', 1),
+('CIE', 'Carné de Identidad de Extranjero', 1),
+('NIE', 'Número de Identidad de Extranjero', 1),
+('CIT', 'Cédula de Identidad de Trabajo', 1),
+('DIP', 'Diploma', 0),
+('CRE', 'Credencial', 1),
+('IDM', 'ID Militar', 1);
+
+-- Creación de la tabla CategoriasProducto
+CREATE TABLE CategoriasProducto (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo VARCHAR(10) NOT NULL UNIQUE,
+    Descripcion VARCHAR(50) NOT NULL,
+    Orden INT
+);
+
+-- Inserción de datos en CategoriasProducto
+INSERT INTO CategoriasProducto (Codigo, Descripcion, Orden) VALUES
+('ELEC', 'Electrónicos', 1),
+('ALIM', 'Alimentos y Bebidas', 2),
+('MODA', 'Moda y Accesorios', 3),
+('HOG', 'Hogar y Jardín', 4),
+('DEPO', 'Deportes', 5),
+('LIB', 'Libros y Papelería', 6),
+('JUE', 'Juguetes', 7),
+('SALUD', 'Salud y Belleza', 8),
+('AUTO', 'Automotriz', 9),
+('MASC', 'Mascotas', 10),
+('HERR', 'Herramientas', 11),
+('MUSI', 'Instrumentos Musicales', 12),
+('BEB', 'Bebés', 13),
+('COMP', 'Computación', 14),
+('OFIC', 'Oficina', 15);
+
+-- Creación de la tabla RolesUsuario
+CREATE TABLE RolesUsuario (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo VARCHAR(10) NOT NULL UNIQUE,
+    Descripcion VARCHAR(50) NOT NULL,
+    NivelPermiso INT DEFAULT 0
+);
+
+-- Inserción de datos en RolesUsuario
+INSERT INTO RolesUsuario (Codigo, Descripcion, NivelPermiso) VALUES
+('ADMIN', 'Administrador', 100),
+('SUPER', 'Supervisor', 80),
+('VENT', 'Vendedor', 50),
+('INV', 'Invitado', 10),
+('RH', 'Recursos Humanos', 70),
+('GER', 'Gerente', 90),
+('ANAL', 'Analista', 40),
+('TEC', 'Técnico', 30),
+('CLIENTE', 'Cliente', 20),
+('PROV', 'Proveedor', 20),
+('CONT', 'Contador', 60),
+('DIR', 'Director', 100),
+('ASIS', 'Asistente', 15),
+('CONS', 'Consultor', 65),
+('COOR', 'Coordinador', 55);
+
+-- Creación de la tabla EstadosPedido
+CREATE TABLE EstadosPedido (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo VARCHAR(10) NOT NULL UNIQUE,
+    Descripcion VARCHAR(50) NOT NULL
+);
+
+-- Inserción de datos en EstadosPedido
+INSERT INTO EstadosPedido (Codigo, Descripcion) VALUES
+('PEND', 'Pendiente de Pago'),
+('PAGADO', 'Pagado'),
+('PROC', 'Procesando'),
+('ENV', 'Enviado'),
+('ENT', 'Entregado'),
+('CANC', 'Cancelado'),
+('DEV', 'Devuelto'),
+('RECH', 'Rechazado'),
+('COMP', 'Completado'),
+('PREP', 'Preparando para Envío'),
+('TRAN', 'En Tránsito'),
+('DISP', 'Disponible para Recoger'),
+('FACT', 'Facturado'),
+('REEM', 'Reembolsado'),
+('RECL', 'Reclamación Abierta');
+
+-- Creación de la tabla TiposTransaccion
+CREATE TABLE TiposTransaccion (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo VARCHAR(10) NOT NULL UNIQUE,
+    Descripcion VARCHAR(50) NOT NULL,
+    Naturaleza CHAR(3) -- 'ING' (Ingreso) o 'EGR' (Egreso)
+);
+
+-- Inserción de datos en TiposTransaccion
+INSERT INTO TiposTransaccion (Codigo, Descripcion, Naturaleza) VALUES
+('VTA', 'Venta de Productos', 'ING'),
+('COM', 'Compra de Materia Prima', 'EGR'),
+('NOM', 'Pago de Nómina', 'EGR'),
+('ALQ', 'Pago de Alquiler', 'EGR'),
+('SERV', 'Pago de Servicios', 'EGR'),
+('INV', 'Inversión', 'EGR'),
+('GAST', 'Gastos Operativos', 'EGR'),
+('DEV', 'Devolución de Venta', 'EGR'),
+('PREST', 'Préstamo Recibido', 'ING'),
+('APORT', 'Aporte de Socios', 'ING'),
+('REMB', 'Reembolso de Gastos', 'ING'),
+('SUBV', 'Subvención', 'ING'),
+('COB', 'Cobro de Facturas', 'ING'),
+('MULT', 'Multa', 'EGR'),
+('INTER', 'Ingresos por Intereses', 'ING');
+
+
+-- Creación de la tabla Monedas
+CREATE TABLE Monedas (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo CHAR(3) NOT NULL UNIQUE,
+    Descripcion VARCHAR(50) NOT NULL,
+    Simbolo VARCHAR(5)
+);
+
+-- Inserción de datos en Monedas
+INSERT INTO Monedas (Codigo, Descripcion, Simbolo) VALUES
+('USD', 'Dólar Estadounidense', '$'),
+('EUR', 'Euro', '€'),
+('GBP', 'Libra Esterlina', '£'),
+('JPY', 'Yen Japonés', '¥'),
+('CAD', 'Dólar Canadiense', '$'),
+('AUD', 'Dólar Australiano', '$'),
+('CHF', 'Franco Suizo', 'CHF'),
+('MXN', 'Peso Mexicano', '$'),
+('BRL', 'Real Brasileño', 'R$'),
+('ARS', 'Peso Argentino', '$'),
+('CLP', 'Peso Chileno', '$'),
+('COP', 'Peso Colombiano', '$'),
+('PEN', 'Sol Peruano', 'S/'),
+('CNY', 'Yuan Chino', '¥'),
+('SEK', 'Corona Sueca', 'kr');
+
+
+
+-- Creación de la tabla Distribuidor
+CREATE TABLE Distribuidor (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Nif VARCHAR(15) NOT NULL UNIQUE,
+    Nombre VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE,
+    Direccion VARCHAR(200),
+    Ciudad VARCHAR(50),
+    PaisId INT,
+    Telefono VARCHAR(20),
+    CategoriaProductoId INT,
+    TipoDocumentoId INT,
+    TipoTransaccionId INT,
+    MonedaId INT,
+    Activo INT DEFAULT 1,
+    FechaAlta DATETIME DEFAULT GETDATE(),
+
+    -- Restricciones de clave foránea con nombre explícito
+    CONSTRAINT FK_Distribuidor_Paises FOREIGN KEY (PaisId) REFERENCES Paises(Id),
+    CONSTRAINT FK_Distribuidor_CategoriasProducto FOREIGN KEY (CategoriaProductoId) REFERENCES CategoriasProducto(Id),
+    CONSTRAINT FK_Distribuidor_TiposDocumento FOREIGN KEY (TipoDocumentoId) REFERENCES TiposDocumento(Id),
+    CONSTRAINT FK_Distribuidor_TiposTransaccion FOREIGN KEY (TipoTransaccionId) REFERENCES TiposTransaccion(Id),
+    CONSTRAINT FK_Distribuidor_Monedas FOREIGN KEY (MonedaId) REFERENCES Monedas(Id)
+);
+
+-- Inserción de 20 registros de prueba en Distribuidor
+INSERT INTO Distribuidor (Nif, Nombre, Email, Direccion, Ciudad, PaisId, Telefono, CategoriaProductoId, TipoDocumentoId, TipoTransaccionId, MonedaId, Activo) VALUES
+('B87654321', 'DistriElect S.A.', 'contacto@distrielect.com', 'Calle Mayor 123', 'Madrid', 5, '912345678', 1, 1, 1, 1, 1),
+('A12345678', 'MegaProveedores', 'info@megaproveedores.es', 'Av. del Sol 45', 'Barcelona', 5, '931234567', 2, 2, 2, 2, 1),
+('C23456789', 'Logistic Global', 'support@logiglobal.com', 'Paseo de la Castellana 10', 'Madrid', 5, '919876543', 3, 3, 3, 3, 1),
+('D34567890', 'Alimentacion Exclusiva', 'ventas@alimex.com', 'Rua Augusta 20', 'Lisboa', 13, '210123456', 2, 4, 4, 4, 1),
+('E45678901', 'Tecno Solutions', 'info@tecnosol.com', '5th Avenue, 101', 'New York', 8, '2125550100', 1, 5, 5, 1, 1),
+('F56789012', 'Moda Europea S.L.', 'pedidos@modaeuropa.es', 'Corso Vittorio Emanuele 50', 'Milán', 12, '021234567', 3, 6, 1, 2, 1),
+('G67890123', 'Juguetes divertidos', 'contact@juguetes.net', 'Schillerstrasse 8', 'Berlin', 6, '03098765432', 4, 7, 2, 3, 1),
+('H78901234', 'Herramientas Pro', 'support@herramientaspro.com', 'Avenida Paulista 300', 'São Paulo', 2, '11987654321', 5, 8, 3, 4, 1),
+('I89012345', 'Libros y más', 'info@librosymas.es', 'Paseo de Gracia 100', 'Barcelona', 5, '932345678', 6, 9, 4, 1, 1),
+('J90123456', 'Deportes Extremos', 'contacto@deportes.es', 'Calle Alcalá 200', 'Madrid', 5, '914567890', 7, 10, 5, 2, 1),
+('K01234567', 'Salud Natural S.A.', 'compras@saludnatural.com', 'Viale del Lavoro 25', 'Roma', 12, '065432109', 8, 1, 1, 3, 1),
+('L12345678', 'Auto Partes', 'distri@autopartes.net', 'Main Street 50', 'London', 10, '2071234567', 9, 2, 2, 4, 1),
+('M23456789', 'Mascotas Felices', 'pedidos@mascotas.es', 'Calle Serrano 50', 'Madrid', 5, '911122334', 10, 3, 3, 1, 1),
+('N34567890', 'Instrumentos Music', 'info@instrumentos.es', 'Rambla de Cataluña 15', 'Barcelona', 5, '935566778', 11, 4, 4, 2, 1),
+('O45678901', 'Bebés con estilo', 'ventas@bebes.com', 'Rue de Rivoli 30', 'Paris', 7, '0123456789', 12, 5, 5, 3, 1),
+('P56789012', 'Computación Avanzada', 'soporte@compuavan.es', 'Calle Velázquez 70', 'Madrid', 5, '917788990', 1, 6, 1, 4, 1),
+('Q67890123', 'Oficina Suministros', 'contacto@oficina.es', 'Rua de S. Paulo 10', 'Lisboa', 13, '219988776', 15, 7, 2, 1, 1),
+('R78901234', 'Tecno Hogar S.L.', 'info@tecnohogar.es', 'Calle de Goya 25', 'Madrid', 5, '918877665', 4, 8, 3, 2, 1),
+('S89012345', 'Libros de texto', 'ventas@librosdetexto.es', 'Av. de América 5', 'Madrid', 5, '913344556', 6, 9, 4, 3, 1),
+('T90123456', 'Deportes acuáticos', 'info@deportesacua.com', 'Paseo Marítimo 1', 'Málaga', 5, '952112233', 7, 10, 5, 4, 1);
+
+
+-- Creación de la tabla DistribuidorEntidad
+CREATE TABLE RolDistribuidor (
+    DistribuidorId INT NOT NULL,
+    RolesUsuarioId INT NOT NULL,
+    FechaDeCreacion DATETIME DEFAULT GETDATE(), 
+    
+    PRIMARY KEY (DistribuidorId, RolesUsuarioId),
+    CONSTRAINT FK_RolDistribuidor_Distribuidor FOREIGN KEY (DistribuidorId) REFERENCES Distribuidor(Id),
+    CONSTRAINT FK_RolDistribuidor_RolesUsuario FOREIGN KEY (RolesUsuarioId) REFERENCES RolesUsuario(Id)
+);
+
+
+-- Inserción de 20 registros de prueba en DistribuidorEntidad
+-- La fecha de creación se inserta automáticamente
+INSERT INTO RolDistribuidor (DistribuidorId, RolesUsuarioId) VALUES
+(1, 1),  -- DistriElect es ADMIN
+(1, 2),  -- Y también SUPER
+(2, 3),  -- MegaProveedores es Vendedor
+(3, 4),  -- Logistic Global es Invitado
+(4, 5),  -- Alimentacion Exclusiva es RH
+(5, 6),  -- Tecno Solutions es Gerente
+(6, 7),  -- Moda Europea es Analista
+(7, 8),  -- Juguetes divertidos es Técnico
+(8, 9),  -- Herramientas Pro es Cliente
+(9, 10), -- Libros y más es Proveedor
+(10, 11),-- Deportes Extremos es Contador
+(11, 12),-- Salud Natural es Director
+(12, 13),-- Auto Partes es Asistente
+(13, 14),-- Mascotas Felices es Consultor
+(14, 15),-- Instrumentos Music es Coordinador
+(15, 1),  -- Bebés con estilo es ADMIN
+(16, 2),  -- Computación Avanzada es SUPER
+(17, 3),  -- Oficina Suministros es Vendedor
+(18, 4),  -- Tecno Hogar es Invitado
+(19, 5),  -- Libros de texto es RH
+(20, 6);  -- Deportes acuáticos es Gerente

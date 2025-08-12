@@ -6,6 +6,7 @@ import useClickOutside, { usePageNavigation } from "../../hooks/useClickOutside"
 interface AutoCompleteControlProps<T> {
     onFetchSuggestions: (inputValue: string) => Promise<T[]>;
     onSelect?: (selectedItem: T) => void;
+    onClear?: () => void
     renderItem?: (item: T) => React.ReactNode;
     debounceTime?: number;
     placeholder?: string;
@@ -17,6 +18,7 @@ interface AutoCompleteControlProps<T> {
 function AutoCompleteControl<T>({
     onFetchSuggestions,
     onSelect,
+    onClear,
     renderItem = (item: T) => <span>{item?.toString()}</span>,
     debounceTime = 300,
     placeholder = "Escribe para buscar...",
@@ -118,6 +120,7 @@ function AutoCompleteControl<T>({
         } else {
             setSuggestions([]);
             setIsLoading(false);
+            if (onClear) onClear();
         }
     };
 

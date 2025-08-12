@@ -5,6 +5,7 @@ import PubSub from "../components/Pubsub";
 import CollapsibleBox from "../components/CollapsibleBox/CollapsibleBox";
 import proveedoresApiService, { type Proveedor } from '../services/proveedorService.js';
 import { useNavigate } from "react-router-dom";
+import CreditsScreen from "../components/forms/CreditsScreen.js";
 
 const About = () => {
 
@@ -16,7 +17,7 @@ const About = () => {
     useEffect(() => {
         showLoader();
         setTimeout(hideLoader, 2000);
-    });
+    }, []);
 
     const navigateTo = (index: number, internal = false) => {
         const targets = [
@@ -36,6 +37,7 @@ const About = () => {
             'https://rcastrogo.github.io/puzz/',
             '../core-test',
             '../group-by-nested',
+            '../metaballs',
         ];
         localStorage.setItem('global', JSON.stringify({ id: 5 }));
         internal ? navigate(targets[index - 1])
@@ -70,7 +72,7 @@ const About = () => {
             <li onClick={() => navigateTo(12, true)}>list/autocomplete-control</li>
             <li onClick={() => navigateTo(15, true)}>core-test</li>
             <li onClick={() => navigateTo(16, true)}>group-by-nested</li>
-            
+            <li onClick={() => navigateTo(17, true)}>metaballs</li>
 
             <li className="w3-teal w3-center">Otros enlaces</li>
             <li onClick={() => navigateTo(13)}>rcastrogo.github.io</li>
@@ -259,7 +261,7 @@ const About = () => {
                                 : (
                                     <div className="">
                                         {datos.map((item, index) => (
-                                            <div className="w3-silver w3-margin w3-border w3-round" style={{ padding: '8px', width: 'calc(100% - 30px' }}>
+                                            <div key={index} className="w3-silver w3-margin w3-border w3-round" style={{ padding: '8px', width: 'calc(100% - 30px' }}>
                                                 {item.id} - {item.nombre}
                                             </div>
                                         ))}
@@ -272,6 +274,26 @@ const About = () => {
                         title="Otros"
                         height="300px"
                         initialContent={modalsContent}
+                        defaultCollapsed={true}
+                    />
+                    <CollapsibleBox
+                        title="Metaballs"
+                        height="400px"
+                        initialContent={
+                            <CreditsScreen
+                                gameWidth={1000}
+                                gameHeight={1000}
+                                particleSize={.8325}
+                                particleDensity={1.525} 
+                                metaballCount={8} 
+                                textScale={30}
+                                fadeDurationEnter={1500}
+                                fadeDurationLeave={2000}
+                                titleText="R e a c t"
+                                showPaticles={true}
+                            />
+
+                        }
                         defaultCollapsed={true}
                     />
                 </div>

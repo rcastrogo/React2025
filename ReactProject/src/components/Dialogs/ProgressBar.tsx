@@ -10,6 +10,7 @@ const ProgressBar = () => {
 
     let subscriptions: (() => void)[];
     const initSubscriptions = () => {
+        console.log('ProgressBar.initSubscriptions');
         subscriptions = [
             PubSub.subscribe<string>(PubSub.messages.LOADING, () => {
                 setShowProgressBar(true);
@@ -25,7 +26,7 @@ const ProgressBar = () => {
     useEffect(() => {
         initSubscriptions();
         return () => subscriptions.forEach(s => s());
-    });
+    }, []);
 
 
     return (

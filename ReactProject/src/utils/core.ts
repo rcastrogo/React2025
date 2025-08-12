@@ -9,6 +9,7 @@ export type SortCriterion<T> = {
 interface Config {
     write(key: string, value: string): Config;
     read(key: string): string | null;
+    remove(key:string): Config;
 }
 
 interface StringBuilder {
@@ -16,12 +17,6 @@ interface StringBuilder {
     append(s: string): StringBuilder;
     appendLine(s?: string): StringBuilder;
 }
-
-interface ScopedObject {
-    outerScope?: any;
-    [key: string]: any;
-}
-
 
 
 /**
@@ -573,13 +568,16 @@ export function getValue(key: string | undefined, scope : any, htmlElement? : an
     }
 
 export function config(name: string): Config {
+    const getName = (key:string) => {
+        return formatString('{0}.{1}', name, key);
+    }
     const instance = {
         write: function (key: string, value: string): Config {
-            localStorage.setItem(formatString('{0}.{1}', name, key), value);
+            localStorage.setItem(getName(key), value);
             return this;
         },
         read: function (key: string): string | null {
-            return localStorage.getItem(formatString('{0}.{1}', name, key));
+            return localStorage.getItem(getName(key));
         },
         readAll: function () {
             var ref = name + '.';
@@ -593,6 +591,10 @@ export function config(name: string): Config {
                     return o;
                 }, {});
             return values;
+        },
+        remove : function(key:string): Config {
+            localStorage.removeItem(getName(key));
+            return this;
         }
     };
     return instance;

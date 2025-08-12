@@ -1,7 +1,8 @@
 
 import PubSub from '../Pubsub';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './Dialog.css';
+import { pol } from '../../utils/pol';
 
 const defaultDialogState = {
     show: false,
@@ -10,12 +11,14 @@ const defaultDialogState = {
     showCloseButton: true,
     actions: [] as React.ReactNode[],
     beforeClose: undefined as (() => boolean | Promise<boolean>) | undefined,
-    allowManualClose: false
+    allowManualClose: false,
+    asInnerHTML: false
 }
 
 const Dialog = () => {
 
     const [modalState, setModalState] = useState({ ...defaultDialogState });
+    const modalRef = useRef<HTMLDivElement>(null);
 
     let subscriptions: (() => void)[];
     const initSubscriptions = () => {
@@ -28,23 +31,84 @@ const Dialog = () => {
                     showCloseButton: data.showCloseButton ?? true,
                     actions: data.actions ?? [],
                     beforeClose: data.beforeClose ?? (() => true),
-                    allowManualClose: data.allowManualClose ?? false
+                    allowManualClose: data.allowManualClose ?? false,
+                    asInnerHTML: data.asInnerHTML ?? false,
                 });
             }),
             PubSub.subscribe(PubSub.messages.CLOSE_MODAL, closeModal)
         ];
     }
+    const selector = 'a[href]:not([disabled]), ' +
+        'button:not([disabled]), ' +
+        'textarea:not([disabled]), ' +
+        'input:not([disabled]),  ' +
+        'select:not([disabled]),  ' +
+        '[tabindex]:not([tabindex="-1"]):not([disabled])';
+    const getControls = () => {
+        const elements = modalRef.current ? modalRef.current.querySelectorAll(selector) : [];
+        return Array
+            .from(elements as NodeListOf<HTMLElement>)
+            .filter(
+                (el: HTMLElement) => el.offsetWidth > 0 ||
+                    el.offsetHeight > 0 ||
+                    el.getClientRects().length > 0
+            );
+    }
+
     const handleKeyDown = async (e: KeyboardEvent) => {
         if (modalState.allowManualClose && e.key === 'Escape' && modalState.show) await closeModal();
+
+        if (e.key === 'Tab' && modalState.show && modalRef.current) {
+            e.preventDefault();
+            const targets = getControls();
+
+            if (!targets.length) return;
+
+            const firstElement = targets[0];
+            const lastElement = targets[targets.length - 1];
+            const currentActiveElement = document.activeElement as HTMLElement;
+
+            if (e.shiftKey) {
+                if (currentActiveElement === firstElement || !modalRef.current.contains(currentActiveElement)) {
+                    lastElement.focus();
+                } else {
+                    const currentIndex = targets.indexOf(currentActiveElement);
+                    const prevElement = targets[currentIndex - 1];
+                    if (prevElement) {
+                        prevElement.focus();
+                    } else {
+                        lastElement.focus();
+                    }
+                }
+            } else {
+                if (currentActiveElement === lastElement || !modalRef.current.contains(currentActiveElement)) {
+                    firstElement.focus();
+                } else {
+                    const currentIndex = targets.indexOf(currentActiveElement);
+                    const nextElement = targets[currentIndex + 1];
+                    if (nextElement) {
+                        nextElement.focus();
+                    } else {
+                        firstElement.focus();
+                    }
+                }
+            }
+        }
     };
 
     useEffect(() => {
         initSubscriptions();
         return () => subscriptions.forEach(s => s());
-    });
+    }, []);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
+
+        if (modalRef.current && modalState.show) {
+            const targets = getControls();
+            targets && targets.length && targets[0].focus();
+        }
+
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         }
@@ -60,7 +124,7 @@ const Dialog = () => {
 
 
     return (
-        <div className={'w3-modal' + (modalState.show ? ' w3-show' : '')}
+        <div ref={modalRef} className={'w3-modal' + (modalState.show ? ' w3-show' : '')}
             onClick={async (e) => { if (modalState.allowManualClose && e.target === e.currentTarget) await closeModal(); }}>
             <div className="w3-modal-content w3-animate-top w3-animate-opacity">
                 {
@@ -72,7 +136,10 @@ const Dialog = () => {
                     )
                 }
                 <div className="w3-container">
-                    {modalState.content}
+                    {
+                        modalState.asInnerHTML
+                        ? <div dangerouslySetInnerHTML={{ __html: modalState.content || ''}} />
+                        : modalState.content}
                 </div>
                 {
                     (modalState.actions.length || modalState.showCloseButton) &&

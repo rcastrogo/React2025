@@ -20,13 +20,11 @@ const ListControlSamplePage = () => {
         obtenerDatos();
     }, []);
 
+
     const handleSelecction = useCallback((selection:string[]) => {
         console.log(selection);
-        if(selection) 
-            setSelected(selection);
-        else
-            setSelected([]);
-    },[]);
+        setSelected(selection);
+    }, []);
 
     return (
         <>
@@ -46,7 +44,7 @@ const ListControlSamplePage = () => {
                         resolver={{ text: 'nif', id: 'id' }}
                         onSelect={(item) => handleSelecction(item) }
                         listHeight="200px"
-                        value={['5', '7']}
+                        value={selected}
                         multiSelect ={true}
                     />
                     <p></p>

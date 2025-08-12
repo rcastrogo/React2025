@@ -75,7 +75,9 @@ namespace Negocio.Core
                                                     .Select(i => string.Format("{0},{1},{2}",
                                                                                reader.GetFieldType(i).Name,
                                                                                i,
-                                                                               reader.GetName(i)))
+                                                                               ToCamelCase(
+                                                                                 reader.GetName(i)
+                                                                               )))
                                                     .ToArray());
         if (extraColumns != null && extraColumns.Length > 0)
           columns += extraColumns; // #Integer,~key1,Prueba#String,~key2,PruebaS
@@ -169,9 +171,9 @@ namespace Negocio.Core
                                                         value.sourceName,
                                                         value.destName))
                          .ToArray();
-      _targetType =  simple ? CreateSimpleType(sourceType, __info) 
+      _targetType = simple ? CreateSimpleType(sourceType, __info)
                             : CreateType(sourceType, __info);
-    } 
+    }
 
     /// <summary>
     /// Crea una nueva instancia del serializador.
@@ -191,8 +193,8 @@ namespace Negocio.Core
     /// </para>
     /// </param>
     /// <param name="simple">Si el objeto origen no hereda de Entity este parámetro debe ser true.</param>
-  public SmallXmlSerializer(Type sourceType, IList values, (Type type, string sourceName, string destName)[] fields, bool simple = false) :
-      this(sourceType, fields, simple)
+    public SmallXmlSerializer(Type sourceType, IList values, (Type type, string sourceName, string destName)[] fields, bool simple = false) :
+        this(sourceType, fields, simple)
     {
       _values = values;
     }
@@ -425,7 +427,7 @@ namespace Negocio.Core
                                                         TypeAttributes.AutoClass |
                                                         //TypeAttributes.Serializable |
                                                         TypeAttributes.Public,
-                                                        typeof(object));         
+                                                        typeof(object));
         // =====================================================================================
         // Atributo XmlRootAttribute
         // =====================================================================================
@@ -593,9 +595,9 @@ namespace Negocio.Core
         // ==================================================================================
         // Definición de la clase
         // ==================================================================================
-        TypeBuilder builder = _moduleBuilder.DefineType(key, 
+        TypeBuilder builder = _moduleBuilder.DefineType(key,
                                                         TypeAttributes.BeforeFieldInit |
-                                                        TypeAttributes.AutoClass       |
+                                                        TypeAttributes.AutoClass |
                                                         //TypeAttributes.Serializable    |
                                                         TypeAttributes.Public,
                                                         typeof(object));
@@ -609,7 +611,7 @@ namespace Negocio.Core
         // Definición del constructor sin parametros de la clase
         // =====================================================================================
         ILGenerator iLGenerator1 = builder.DefineConstructor(MethodAttributes.RTSpecialName |
-                                                             MethodAttributes.SpecialName   |
+                                                             MethodAttributes.SpecialName |
                                                              MethodAttributes.Public,
                                                              CallingConventions.Standard,
                                                              new Type[0])
@@ -639,7 +641,7 @@ namespace Negocio.Core
         if (sourceType.IsClass)
           iLGenerator.Emit(OpCodes.Castclass, sourceType);
         else
-          iLGenerator.Emit(OpCodes.Box, sourceType);            
+          iLGenerator.Emit(OpCodes.Box, sourceType);
         iLGenerator.Emit(OpCodes.Stloc_0);
         // ===================================================================================
         // Crear y llenar campos
@@ -662,16 +664,16 @@ namespace Negocio.Core
             break;
           }
           FieldInfo info2 = infoArray[index];
-          FieldBuilder field = builder.DefineField(info2.DestFieldName, 
-                                                   info2.DataType, 
+          FieldBuilder field = builder.DefineField(info2.DestFieldName,
+                                                   info2.DataType,
                                                    FieldAttributes.Public);
           iLGenerator.Emit(OpCodes.Ldarg_0);
           iLGenerator.Emit(OpCodes.Ldloc_0);
           // ================================================================================
           // Intentar utilizar la propiedad
           // ================================================================================
-          var __property = sourceType.GetProperty(info2.SourcePropertyName, 
-                                                  BindingFlags.Public | 
+          var __property = sourceType.GetProperty(info2.SourcePropertyName,
+                                                  BindingFlags.Public |
                                                   BindingFlags.Instance);
           if (__property != null)
           {
@@ -683,9 +685,9 @@ namespace Negocio.Core
           // ================================================================================
           // Utilizar el campo
           // ================================================================================
-          iLGenerator.Emit(OpCodes.Ldfld, sourceType.GetField(info2.SourcePropertyName, 
-                                                              BindingFlags.Public | 
-                                                              BindingFlags.Instance));    
+          iLGenerator.Emit(OpCodes.Ldfld, sourceType.GetField(info2.SourcePropertyName,
+                                                              BindingFlags.Public |
+                                                              BindingFlags.Instance));
           iLGenerator.Emit(OpCodes.Stfld, field);
           index++;
         }
@@ -705,7 +707,7 @@ namespace Negocio.Core
       {
         builder.Append(fieldInfo.SourcePropertyName + fieldInfo.DestFieldName);
       }
-      return Math.Abs(builder.ToString().GetHashCode()).ToString("00000000000000");      
+      return Math.Abs(builder.ToString().GetHashCode()).ToString("00000000000000");
     }
 
     /// <summary>
@@ -789,6 +791,13 @@ namespace Negocio.Core
                                         IncludeFields = true,
                                         WriteIndented = true
                                       });
+    }
+
+    private static string ToCamelCase(string s)
+    {
+      if (string.IsNullOrEmpty(s) || s.Length < 2)   return s;
+      if (char.IsLower(s[0])) return s;
+      return char.ToLower(s[0]) + s[1..];
     }
 
   }

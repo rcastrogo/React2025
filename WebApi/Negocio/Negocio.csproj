@@ -5,7 +5,7 @@
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
-    <AssemblyName>AngulaApp.Negocio</AssemblyName>
+    <AssemblyName>ReactApp.Negocio</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

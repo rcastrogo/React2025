@@ -1,166 +1,163 @@
-import { useCallback, useEffect, useRef, useState, type MouseEventHandler } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEventHandler, type ReactNode } from "react";
 import useClickOutside, { usePageNavigation } from "../../hooks/useClickOutside";
+import { pol } from "../../utils/pol";
 
-interface Resolver<T> {
-    text: keyof T;
-    id: keyof T;
+export interface option {
+    value: string;
+    label: string;
+    data?: any;
+
 }
 
-interface ComboBoxControlProps<T> {
-    dataSource: T[];
-    resolver?: Resolver<T>;
-    onSelect?: (value: T | null) => void;
+interface ComboBoxControlProps {
+    options: option[] | undefined;
+    onChange?: (value: string) => void;
     value?: string;
+    disabled?: boolean;
+    resolve?: (item:any) => ReactNode;
 }
 
-function ComboBoxControl<T>({
-    dataSource = [],
-    resolver = {
-        text: 'name' as keyof T,
-        id: 'id' as keyof T
-    },
-    onSelect = (value: T | null) => console.log(value),
-    value = ''
-
-}: ComboBoxControlProps<T>) {
-    const [inputValue, setInputValue] = useState('');
-    const [hiddenValue, setHiddenValue] = useState('');
-    const [showList, setShowList] = useState(false);
-    const [selectedIndex, setSelectIndex] = useState(-1);
-    const [initialSelectedIndex, setInitialSelectedIndex] = useState(-1);
-
-    const wrapperRef = useRef(null);
+function ComboBoxControl({
+    options = [],
+    onChange = (value: string) => console.log(value),
+    value = '',
+    disabled = false,
+    resolve = undefined,
+}: ComboBoxControlProps) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
+    const [selectedLabel, setSelectedLabel] = useState('Seleccionar...')
+    const comboBoxRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLDivElement>(null);
-    const {calculatePageIndex} = usePageNavigation({
+
+    const { calculatePageIndex } = usePageNavigation({
         listRef,
-        totalItems: dataSource.length,
-        current: selectedIndex,
+        totalItems: options.length,
+        current: highlightedIndex,
     });
 
-    const getText = useCallback((item: any) => resolver ? item[resolver.text] : item.toString(), [resolver]);
-    const getId = useCallback((item: any) => resolver ? item[resolver.id] : item.toString(), [resolver]);
+    useClickOutside(comboBoxRef, () => { setIsOpen(false) });
 
-
-    useClickOutside(wrapperRef, () => { setShowList(false) });
-
-    const setCurrentIndex = useCallback((index: number, close = true) => {
-        setSelectIndex(index);
-        if (index == -1) {
-            setInputValue('');
-            setHiddenValue(getId(''));
-            if (onSelect) onSelect(null);
-            return;
+    const handleToggle = () => setIsOpen(!isOpen);
+    const handleOptionClick = (option: option) => {
+        if (option.value !== value) {
+            setSelectedLabel(option.label);
+            onChange(option.value);
+            const input = comboBoxRef.current ? comboBoxRef.current.querySelector<HTMLInputElement>('.w3-input')
+                : null;
+            input && input.focus();
         }
-        var target = dataSource[index];
-        setInputValue(getText(target));
-        setHiddenValue(getId(target));
-        if (onSelect) onSelect(target);
-        if (close) setShowList(false);
-    }, [getText, getId, dataSource]);
-
-    const handleInputClick = () => {
-        if (!showList) { // Si la lista va a abrirse
-            setInitialSelectedIndex(selectedIndex);
-        }
-        setShowList(!showList);
+        setIsOpen(false);
     };
 
-    useEffect(() => {
-        let newIndex = -1;
-        if (value) {
-            dataSource.map((d, index) => {
-                if (value == getId(d)) newIndex = index
-            });
-        }
-        setCurrentIndex(newIndex);
-    }, [value]);
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
 
-    // ====================================================================================
-    // --- Effect for Scrolling Active Item into View ---
-    // ====================================================================================
-    useEffect(() => {
-        if (showList && selectedIndex > -1 && listRef.current) {
-            const activeDiv = listRef.current.children[selectedIndex] as HTMLElement;
+        const { key } = e;
+        if (isOpen && (key == 'Tab' || key === 'Escape')) {
+            setIsOpen(false);
+            return;
+        }
+        else if (!isOpen && (key === 'ArrowDown' || key === 'Enter' || key === ' ')) {
+            e.preventDefault();
+            setIsOpen(true);
+            setHighlightedIndex(find().index);
+            return;
+        }
+
+        switch (key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                setHighlightedIndex(Math.min(highlightedIndex + 1, options.length - 1));
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                setHighlightedIndex(Math.max(highlightedIndex - 1, 0));
+                break;
+            case 'Enter':
+            case ' ':
+                e.preventDefault();
+                if (highlightedIndex !== -1) {
+                    const option = options[highlightedIndex];
+                    if (option.value !== value) {
+                        setSelectedLabel(option.label);
+                        onChange(option.value);
+                    }
+                    setIsOpen(false);
+                }
+                break;
+            case 'PageDown':
+            case 'PageUp':
+                e.preventDefault();
+                if (isOpen) {
+                    const index = calculatePageIndex(key);
+                    setHighlightedIndex(index);
+                }
+                break
+            default:
+                break;
+        }
+    }, [isOpen, options, value, onChange, highlightedIndex]);
+
+    const scrollIntoView = (index: number) => {
+        if (listRef.current) {
+            const activeDiv = listRef.current.children[index] as HTMLElement;
             if (activeDiv) {
                 activeDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }
-    }, [showList, selectedIndex, dataSource]);
+    }
 
-    // ====================================================================================
-    // --- handleKeyDown ---
-    // ====================================================================================
-    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    const find = () => {
+        const index = options.findIndex(opt => opt.value == value);
+        const option = options[index];
+        return { index, option }
+    }
 
-        const { key } = e;
+    useEffect(() => {
+        console.log('ComboBoxControl.render');
+    });
 
-        if (key == 'Tab') {
-            setShowList(false);
-            return;
-        }
-        if (key === 'Escape') {
-            setCurrentIndex(initialSelectedIndex);
-            e.preventDefault();
-            return;
-        }
-        if (key === 'ArrowDown') {
-            e.preventDefault();
-            if (showList)
-                setCurrentIndex(Math.min(selectedIndex + 1, dataSource.length - 1), false);
-            else
-                setShowList(true);
-            return;
-        }
-        if (key === 'ArrowUp') {
-            e.preventDefault();
-            if (showList)
-                setCurrentIndex(Math.max(selectedIndex - 1, 0), false);
-        }
-        if (key === 'Enter') {
-            e.preventDefault();
-            if (showList && selectedIndex > -1)
-                setShowList(false);
-            else
-                setShowList(true);
-            return;
-        }
-        if (key === 'PageDown' || key === 'PageUp') {
-            e.preventDefault();
-            if (showList) {
-                const index = calculatePageIndex(key);
-                setCurrentIndex(index);
-                return;
-            }
-        }
-    }, [showList, selectedIndex, dataSource, setCurrentIndex, hiddenValue, getId]);
+    useEffect(() => {
+        scrollIntoView(highlightedIndex);
+    }, [highlightedIndex]);
 
+    useEffect(() => {
+        const {option, index} = find();
+        if (isOpen) {
+            setHighlightedIndex(index !== -1 ? index : 0);
+            scrollIntoView(index)
+        }
+        if (option) setSelectedLabel(option.label);
+
+    }, [isOpen, options, value]);
 
     return (
-        <div ref={wrapperRef}
-            className={`autocomplete combo-box ${showList ? 'open' : ''}`}
+        <div ref={comboBoxRef}
+            className={`autocomplete combo-box ${isOpen ? 'open' : ''}`}
         >
             <input
+                className="w3-input w3-border w3-round-large"
                 type="text"
-                value={inputValue}
-                onClick={handleInputClick}
+                value={selectedLabel}
+                onClick={handleToggle}
                 onKeyDown={handleKeyDown}
                 readOnly={true}
+                disabled={disabled}
                 style={{ width: '100%' }}
             />
-            <input type="hidden" value={hiddenValue} />
             <div ref={listRef}
-                className={`autocomplete-items ${showList ? '' : 'w3-hide'}`}
+                className={`autocomplete-items ${isOpen ? '' : 'w3-hide'}`}
                 tabIndex={-1}>
                 {
-                    dataSource.map((item, index) => (
+                    options.map((item, index) => (
                         <div
-                            key={getId(item) || index}
-                            id={getId(item)}
+                            key={item.value}
+                            id={item.value}
                             data-index={index}
-                            className={index === selectedIndex ? 'autocomplete-active' : ''}
-                            onClick={() => setCurrentIndex(index)}
+                            className={index === highlightedIndex ? 'autocomplete-active' : ''}
+                            onClick={() => handleOptionClick(item)}
                         >
-                            {getText(item)}
+                            {resolve && item.data && resolve(item.data) || item.label}
                         </div>
 
                     ))

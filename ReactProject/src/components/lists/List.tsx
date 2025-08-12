@@ -1,10 +1,11 @@
 
 import { useCallback, useEffect, useRef, useState, type MouseEventHandler } from "react";
-import { usePageNavigation } from '../../hooks/useClickOutside'; 
+import { usePageNavigation } from '../../hooks/useClickOutside';
+import { pol } from "../../utils/pol";
 
 
 interface Resolver<T> {
-    text: keyof T;
+    text: keyof T | ((item: T) => string);
     id: keyof T;
 }
 
@@ -12,9 +13,10 @@ interface ListControlProps<T> {
     dataSource: T[];
     resolver?: Resolver<T>;
     onSelect?: (value: string[]) => void;
-    value?: string | string[];
+    value?: string[];
     listHeight: string;
     multiSelect?: boolean;
+    disabled?: boolean;
 }
 
 const ListControl = <T extends Record<string, any>>({
@@ -24,32 +26,50 @@ const ListControl = <T extends Record<string, any>>({
         id: 'id' as keyof T
     },
     onSelect = (value: string[]) => console.log(value),
-    value = '',
+    value = [],
     listHeight = '',
-    multiSelect = false
+    multiSelect = false,
+    disabled = false,
 }: ListControlProps<T>) => {
-
-    const [hiddenValue, setHiddenValue] = useState('');
 
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [active, setActive] = useState(-1);
 
-    const listRef = useRef<HTMLUListElement>(null);    
-    const {calculatePageIndex} = usePageNavigation({
+    const listRef = useRef<HTMLUListElement>(null);
+    const { calculatePageIndex } = usePageNavigation({
         listRef,
         totalItems: dataSource.length,
         current: active,
     });
 
-    const getText = useCallback((item: any) => resolver ? String(item[resolver.text]) : item.toString(), [resolver]);
+    const __scrollIntoView = (targets: Set<string>) => {
+        setTimeout(() => {
+            if (targets.size == 1 && listRef.current) {
+                const targetId = targets.values().next().value
+                const target = Array.from(listRef.current.children)
+                    .find(li => li.id === targetId);
+                target && target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }, 0);
+    }
+
+    const getText = useCallback((item: any): string => {
+        if (!resolver) return item?.toString() || '';
+        if (pol.core.isFunction(resolver.text)) return resolver.text(item);
+        return String(item[resolver.text]) || '';
+    }, [resolver]);
+
     const getId = useCallback((item: any) => resolver ? String(item[resolver.id]) : item.toString(), [resolver]);
+
+    useEffect(() => {
+        console.log('ListControl.render');
+    })
 
     // =======================================================================
     // Inicialización para 'value' al montar o si cambia value o dataSource
     // =======================================================================
     useEffect(() => {
         if (dataSource.length) {
-            console.log('useEffect');
             const ids = Array.isArray(value) ? value : (value ? [value] : []);
             const targets = dataSource.reduce((acc, item) => {
                 var id = getId(item);
@@ -57,9 +77,11 @@ const ListControl = <T extends Record<string, any>>({
                 return acc;
             }, new Set<string>());
             __setSelectedIds(targets);
+            __scrollIntoView(targets);
             return;
         };
-    }, [dataSource]);
+    }, [value]);
+
     // =======================================================================
     // Mover el foco a un elemento de la lista
     // =======================================================================
@@ -70,24 +92,10 @@ const ListControl = <T extends Record<string, any>>({
         }
     };
     // =======================================================================
-    // Función para notificar la selección
-    // =======================================================================
-    const raiseOnSelect = () => {
-        const targets = selectedIds.size ? [...selectedIds] : [];
-        setHiddenValue(targets.join(','));
-        onSelect(targets);
-    };
-    // =======================================================================
-    // Notificar la selección cuando 'selectedIds'cambia     
-    // =======================================================================
-    useEffect(() => {
-        raiseOnSelect();
-    }, [selectedIds]);
-    // =======================================================================
     // Lógica de selección del elemento
     // =======================================================================
     const handleItemClick = (index: number) => {
-        if (dataSource.length) {
+        if (dataSource.length && !disabled) {
             const target = dataSource[index];
             const targetId = getId(target);
 
@@ -98,17 +106,18 @@ const ListControl = <T extends Record<string, any>>({
 
             setFocusedElelemntByIndex(index);
             __setSelectedIds(new Set(selectedIds));
+            onSelect(selectedIds.size ? [...selectedIds] : []);
         }
     };
-    const __setSelectedIds = (value:Set<string>) => {
-        if(value.size){
-            if(multiSelect)
+    const __setSelectedIds = (value: Set<string>) => {
+        if (value.size) {
+            if (multiSelect)
                 setSelectedIds(new Set(value));
             else {
                 const values = [...value];
-                setSelectedIds(new Set([values[values.length - 1]])); 
+                setSelectedIds(new Set([values[values.length - 1]]));
             }
-        } else 
+        } else
             setSelectedIds(new Set());
     }
     // ====================================================================================
@@ -116,7 +125,7 @@ const ListControl = <T extends Record<string, any>>({
     // ====================================================================================
     const handleKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
 
-        if (dataSource.length === 0) return;
+        if (dataSource.length === 0 || disabled) return;
 
         const { key } = e;
         if (key === 'ArrowDown') {
@@ -140,37 +149,26 @@ const ListControl = <T extends Record<string, any>>({
             setFocusedElelemntByIndex(index);
             return;
         }
-        if(key === 'Home'){
+        if (key === 'Home') {
             e.preventDefault();
             setFocusedElelemntByIndex(0);
             return;
         }
-        if(key === 'End'){
+        if (key === 'End') {
             e.preventDefault();
             setFocusedElelemntByIndex(dataSource.length - 1);
             return;
         }
     };
-    // ===============================================================================
-    // Effect for Scrolling Active Item into View
-    // ===============================================================================
-    useEffect(() => {
-        if (selectedIds.size == 1 && listRef.current) {
-            const targetId = selectedIds.values().next().value
-            const target = Array.from(listRef.current.children)
-                .find(li => li.id === targetId);
-            target && target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    }, []);
 
     return (
         <>
-            <input type="hidden" value={hiddenValue} />
             <ul ref={listRef}
                 onKeyDown={handleKeyDown}
                 tabIndex={0}
-                className={'rcg-list w3-border'}
+                className={`rcg-list w3-border ${disabled ? 'disabled' : ''}`}
                 style={{ height: listHeight }}
+
             >
                 {
                     dataSource.map((item, index) => {
@@ -186,7 +184,7 @@ const ListControl = <T extends Record<string, any>>({
                                 className={`${isSelected ? 'autocomplete-active' : ''}`}
                                 onClick={() => { handleItemClick(index); }}
                             >
-                                {getText(item)}
+                                <input type="checkbox" readOnly checked={isSelected}></input> {getText(item)}
                             </li>
                         );
                     })

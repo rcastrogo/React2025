@@ -13,6 +13,10 @@ import ListControlSamplePage from "../Pages/samples/ListControlSamplePage";
 import AutocompleteControlSamplePage from "../Pages/samples/AutocompleteControlSamplePage";
 import CoreTestSamplePage from "../Pages/samples/CoreTestSamplePage";
 import GroupByNestedSamplePage from "../Pages/samples/GoupByNestedSamplePage";
+import MetaballsSamplePage from "../Pages/samples/MetaballsSamplePage";
+import { pol } from "../utils/pol";
+import MasterTablesSamplePage from "../Pages/samples/MasterTablesSamplePage";
+import DistribuidoresHomePage from "../Pages/distribuidor/DistribuidoresHomePage";
 
 export interface Enlace {
     id: number;
@@ -23,6 +27,8 @@ export interface Enlace {
     right?: boolean;
 }
 
+
+export const appConfig = pol.core.config('ReactApp');
 
 const enlaces: Enlace[] = [
     {
@@ -94,6 +100,27 @@ const enlaces: Enlace[] = [
         right: false,
         target: GroupByNestedSamplePage
     },
+    {
+        id: 109,
+        text: '',
+        route: 'metaballs',
+        right: false,
+        target: MetaballsSamplePage
+    },
+    {
+        id: 110,
+        text: '',
+        route: 'master-tables',
+        right: false,
+        target: MasterTablesSamplePage
+    },
+    {
+        id: 111,
+        text: '',
+        route: 'distribuidores',
+        right: false,
+        target: DistribuidoresHomePage
+    }, 
     {
         id: 200,
         text: 'Dashboard',

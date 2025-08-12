@@ -1,12 +1,12 @@
 ﻿
 import React, { useState, useEffect, useRef, type JSX } from 'react';
 import PubSub from "../components/Pubsub.js";
-
 import TablaPaginada, { type TableDataItem, type ActionResolver } from '../components/TablaPaginada.js';
 import proveedoresApiService, { type Proveedor } from '../services/proveedorService.js';
 import { useModal } from '../hooks/useModal';
 import ProveedorForm, { type FrmProveedor } from '../components/forms/ProveedorForm';
 import { useNavigate } from 'react-router-dom';
+import { createMultipleSorter, createSimpleSorter } from '../utils/core.js';
 
 
 const Proveedores = () => {
@@ -14,7 +14,7 @@ const Proveedores = () => {
     const [datos, setDatos] = useState<Proveedor[]>([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-    const {showModal,closeModal, showNotification } = useModal();
+    const { showModal, closeModal, showNotification } = useModal();
     const navigate = useNavigate();
 
     const hideLayer = () => PubSub.publish(PubSub.messages.HIDE_LAYER);
@@ -163,9 +163,9 @@ const Proveedores = () => {
                     <button className="w3-button w3-gray" onClick={closeModal}>Continuar</button>,
                     <button className="w3-button w3-gray" onClick={closeModal}>Cancelar</button>
                 ],
-                beforeClose: () => { 
+                beforeClose: () => {
                     callback(target.datos);
-                    return true; 
+                    return true;
                 }
             });
             return;
@@ -180,15 +180,30 @@ const Proveedores = () => {
     // ============================================================================================================
     const entity = 'Proveedores';
     const columns = [
-        { key: 'id', title: 'Id', formatter: (v: number) => String(v), sorter: (a: number, b: number) => a - b },
-        { key: 'nif', title: 'Nif', formatter: (v: string) => v, sorter: (a: string, b: string) => a.localeCompare(b) },
-        { key: 'nombre', title: 'Nombre', formatter: (v: string) => v, sorter: (a: string, b: string) => a.localeCompare(b) },
-        { key: 'descripcion', title: 'Descripción', formatter: (v: string) => v, sorter: (a: string, b: string) => a.localeCompare(b) },
+        {
+            key: 'id', title: 'Id', formatter: (v: number) => String(v),
+            sorter: createSimpleSorter('id')
+        },
+        {
+            key: 'nif', title: 'Nif', formatter: (v: string) => v,
+            sorter: createMultipleSorter<Proveedor>([
+                { key: 'nif' },
+                { key: (p) => p.id, direction: 'asc' }
+            ])
+        },
+        {
+            key: 'nombre', title: 'Nombre', formatter: (v: string) => v,
+            sorter: createSimpleSorter('nombre')
+        },
+        {
+            key: 'descripcion', title: 'Descripción', formatter: (v: string) => v,
+            sorter: createSimpleSorter('descripcion')
+        },
         {
             key: 'fechaDeAlta',
             title: 'Fecha de alta',
             formatter: (v: string) => (v || '').split(' ')[0],
-            sorter: (a: string, b: string) => a.localeCompare(b)
+            sorter: createSimpleSorter('fechaDeAlta')
         }
     ];
     const actionResolver: ActionResolver = {
@@ -241,7 +256,7 @@ const Proveedores = () => {
                         datosIniciales={datos.map((d) => d as TableDataItem)}
                         elementosPorPaginaInicial={5}
                         enableDoubleClickEdit={true}
-                        options={{ entity, columns, actionResolver, contextMenuItems } }
+                        options={{ entity, columns, actionResolver, contextMenuItems }}
                         loading={cargando}
                     />
                 </div>

@@ -9,15 +9,16 @@ import authService from './services/authService';
 import PubSub from './components/Pubsub';
 import './App.css';
 import './assets/css/w3.css';
+import Pubsub from "./components/Pubsub";
+import { APP_BASENAME, APP_SPLASH_TIME } from "./constants/appConfig";
+import useDebounce from "./hooks/useDebounce";
 
 
 function App() {
 
-    const basename = import.meta.env.VITE_APP_BASE_URL || '/';
-    const splashTime = 3000;
     const [showSplash, setShowSplash] = useState(true);
     const [isAuthenticated, SetIsAuthenticated] = useState(authService.checkAuth());
-
+    
     let subscriptions: (() => void)[];
     const initSubscriptions = () => {
         subscriptions = [
@@ -26,17 +27,32 @@ function App() {
         ];
     }
 
+    const handleResize = useDebounce(() => Pubsub.publish(Pubsub.messages.WINDOW_RESIZE, window), 250);
+    const handleScroll = useDebounce(() => Pubsub.publish(Pubsub.messages.WINDOW_SCROLL, window), 250);
+
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [handleResize]);
+
+
     useEffect(() => {
         initSubscriptions();
-        return () => subscriptions.forEach(s => s());
-    });
+        return () => {
+            subscriptions.forEach(s => s());
+        }
+    }, []);
 
     // ===================================================================
     // SplashScreen lo primero
     // ===================================================================
     if (showSplash)
         return <SplashScreen
-            splashTime={splashTime}
+            splashTime={APP_SPLASH_TIME}
             onFinish={() => setShowSplash(false)}
         />;
     // ===================================================================
@@ -44,7 +60,7 @@ function App() {
     // ===================================================================
     if (!isAuthenticated) return <LoginPage />;
     return (
-        <BrowserRouter basename={basename}>
+        <BrowserRouter basename={APP_BASENAME}>
             <Routes>
                 <Route path="/" element={<Layout />}>
                     {configService.enlaces.map(item =>

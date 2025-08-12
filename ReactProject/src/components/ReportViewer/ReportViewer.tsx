@@ -11,7 +11,13 @@ export interface ReportViewerProps<T> {
     tableFooter?: ReactNode;
 }
 
-const ReportViewer = <T,>({ reportDefinition, data, renderAsTable = true, tableHeader, tableFooter }: ReportViewerProps<T>) => {
+const ReportViewer = <T,>({
+    reportDefinition,
+    data,
+    renderAsTable = true,
+    tableHeader,
+    tableFooter
+}: ReportViewerProps<T>) => {
     const report = new ReportEngine<T>();
     const [reportContent, setReportContent] = useState<React.JSX.Element[]>([]);
 
@@ -48,7 +54,7 @@ const ReportViewer = <T,>({ reportDefinition, data, renderAsTable = true, tableH
                     {tableHeader && <thead>{tableHeader}</thead>}
                     <tbody>
                         {reportContent.map((item, index) => (
-                            <React.Fragment key={index}> {item} </React.Fragment>
+                            <React.Fragment key={index}>{item}</React.Fragment>
                         ))}
                     </tbody>
                     {tableFooter && <tfoot>{tableFooter}</tfoot>}
@@ -56,7 +62,7 @@ const ReportViewer = <T,>({ reportDefinition, data, renderAsTable = true, tableH
             ) : (
                 <>
                     {reportContent.map((item, index) => (
-                        <React.Fragment key={index}> {item} </React.Fragment>
+                        <React.Fragment key={index}>{item}</React.Fragment>
                     ))}
                 </>
             )}

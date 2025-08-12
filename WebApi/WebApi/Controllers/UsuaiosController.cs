@@ -4,6 +4,11 @@ using Dal.Core;
 using Negocio;
 using Negocio.Entities;
 using WebApi.Services;
+using Negocio.Core;
+using System.Linq;
+using WebApi.Model;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Azure;
 
 namespace WebApi.Controllers
 {
@@ -77,5 +82,145 @@ namespace WebApi.Controllers
       user.Delete();
       return NoContent();
     }
+
+
+    [HttpGet("tables/{tablename}")]
+    public ActionResult GetTableRows(string tablename)
+    {
+      var query = string.Format("SELECT * FROM [{0}]", tablename);
+      System.Threading.Thread.Sleep(500);
+      var json = SqlDirectQuery.LoadFromQuery(query).ToJsonString();
+      return Ok(json);
+    }
+
+    [HttpGet("distribuidores")]
+    public ActionResult GetDistribuidores()
+    {
+      var query = "SELECT * FROM [Distribuidor]";
+      System.Threading.Thread.Sleep(500);
+      var json = SqlDirectQuery.LoadFromQuery(query).ToJsonString();
+      return Ok(json);
+    }
+
+    [HttpGet("distribuidores/by/{term}")]
+    public ActionResult GetDistribuidoresByTerm(string term)
+    {
+      var query = string.Format(@"
+        SELECT * FROM dbo.Distribuidor D 
+        WHERE D.Nif LIKE '%{0}%' or 
+              D.Nombre LIKE '%{0}%' or
+	            D.Email LIKE '%{0}%' or 
+              D.Direccion LIKE '%{0}%' ",
+      term);
+      System.Threading.Thread.Sleep(500);
+      var json = SqlDirectQuery.LoadFromQuery(query).ToJsonString();
+      return Ok(json);
+    }
+
+    [HttpGet("distribuidores/{id}")]
+    public ActionResult GetDistribuidoresById(int id)
+    {
+      var query = string.Format("SELECT * FROM dbo.Distribuidor WHERE Id = {0}", id);
+      System.Threading.Thread.Sleep(500);
+      var json = SqlDirectQuery.LoadFromQuery(query).ToJsonString();
+      return Ok(json);
+    }
+
+    [HttpGet("roles/distribuidor/{id}")]
+    public ActionResult GetRolesDistribuidor(int id)
+    {
+      var query = string.Format("SELECT * FROM dbo.RolDistribuidor WHERE DistribuidorId={0} ORDER BY DistribuidorId", id);
+      System.Threading.Thread.Sleep(500);
+      var json = SqlDirectQuery.LoadFromQuery(query).ToJsonString();
+      return Ok(json);
+    }
+
+    [HttpPost("distribuidores/validate")]
+    public ActionResult<ApiResponse<object>> ValidateDistribuidor([FromBody] Usuario usuario)
+    {
+
+      var actions = new List<ServerAction>();
+
+      try
+      {
+        if (usuario.Nif == "")
+        {
+          actions.Add(new ServerAction("error", "El NIF es inválido."));
+          actions.Add(new ServerAction("focus", "[name=nif]"));
+          return Ok(CreateApiResponse(ApiResult.Error, null, actions));
+        }
+        if (usuario.Nombre == "error")
+        {
+          throw new Exception("El nombre 'error' ya existe en la base de datos");
+        }
+
+        var query = string.Format("SELECT * FROM dbo.Distribuidor WHERE Id = {0}", usuario.Id);
+        var response = SqlDirectQuery.LoadFromQuery(query)[0];
+        return Ok(CreateApiResponse(ApiResult.Ok, response, actions));
+
+      }
+      catch (Exception ex)
+      {
+        actions.Clear();
+        actions.Add(CreateModalServerAction(ex, "ReactApp - ValidateDistribuidor"));
+        return Ok(CreateApiResponse(ApiResult.Error, null, actions));
+      }
+    }
+
+    private string formatExceptionInfo(Exception ex)
+    {
+      return $@"
+        <div class=""w3-padding"">
+            <b>{ex.Message}</b>
+            <div class=""w3-border-top"">
+              {ex.ToString()}
+            </div>
+        </div>";
+    }
+
+    private object CreateApiResponse(ApiResult result, object response, List<ServerAction> actions)
+    {
+      return new ApiResponse<object>(
+          Result: result,
+          Response: response,
+          Actions: actions
+      );
+    }
+
+    private ServerAction CreateModalServerAction(Exception ex, string title)
+    {
+      return new ServerAction("publish", new {
+        topic = "SHOW_MODAL",
+        data = new
+        {
+          title = title,
+          content = formatExceptionInfo(ex),
+          showCloseButton = true,
+          allowManualClose = false,
+          asInnerHTML = true
+        }
+      });
+    }
   }
 }
+
+
+//var actions = new List<ServerAction> {
+//    new ServerAction("error", "El NIF es inválido."),
+//    new ServerAction("focus", "[name=nif]"),
+//    new ServerAction("alert", "Validación con errores."),
+//    //new ServerAction("publish", new {
+//    //  topic = "SHOW_INFO",
+//    //  data = "La validación ha fallado, pero la solicitud fue procesada."
+//    //}),
+//    //new ServerAction("navigate", "/about")
+//    new ServerAction("publish", new {
+//      topic = "SHOW_MODAL",
+//      data = new {
+//          title = "ReactApp",
+//          content = "Error en la validación!",
+//          showCloseButton =  true,
+//          allowManualClose = false
+//      }
+//    })
+//};
