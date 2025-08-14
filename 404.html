@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <title>Redireccionando...</title>
   <script type="text/javascript">
-
-    const fullPath = window.location.pathname + window.location.search + window.location.hash;
-    sessionStorage.setItem('reactApp.redirect', fullPath);
-    window.location.replace("/React2025/");
-
+    setTimeout(function(){
+        const fullPath = window.location.pathname + window.location.search + window.location.hash;
+        sessionStorage.setItem('ReactApp.redirect', fullPath);
+      //window.location.replace("/React2025/");
+    }, 3000);
   </script>
 </head>
 <body>
