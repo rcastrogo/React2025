@@ -17,6 +17,10 @@ import MetaballsSamplePage from "../Pages/samples/MetaballsSamplePage";
 import { pol } from "../utils/pol";
 import MasterTablesSamplePage from "../Pages/samples/MasterTablesSamplePage";
 import DistribuidoresHomePage from "../Pages/distribuidor/DistribuidoresHomePage";
+import TemplateTester from "../Pages/samples/TemplateTester";
+import EmptySamplePage from "../Pages/samples/EmptySamplePage";
+import LazyLoadSamplePage from "../Pages/samples/LazyLoadSamplePage";
+import ScheduleSamplePage from "../Pages/samples/ScheduleSamplePage";
 
 export interface Enlace {
     id: number;
@@ -120,7 +124,35 @@ const enlaces: Enlace[] = [
         route: 'distribuidores',
         right: false,
         target: DistribuidoresHomePage
-    }, 
+    },
+    {
+        id: 112,
+        text: '',
+        route: 'code-gen',
+        right: false,
+        target: TemplateTester
+    },
+        {
+        id: 113,
+        text: '',
+        route: 'sample',
+        right: false,
+        target: EmptySamplePage
+    },
+    {
+        id: 114,
+        text: '',
+        route: 'lazy-load',
+        right: false,
+        target: LazyLoadSamplePage
+    },
+    {
+        id: 115,
+        text: '',
+        route: 'Schedule',
+        right: false,
+        target: ScheduleSamplePage
+    },
     {
         id: 200,
         text: 'Dashboard',

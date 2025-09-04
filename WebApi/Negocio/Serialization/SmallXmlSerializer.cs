@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -46,7 +47,7 @@ namespace Negocio.Core
     }
 
     /// <summary>
-    /// Crea un serializador para procesar los datos de un dataReader. El tipo resultante tendrá loi
+    /// Crea un serializador para procesar los datos de un dataReader. El tipo resultante tendrá los
     /// mismos campos públicos que la sentencia SQL de selección.
     /// </summary>
     /// <param name="reader">El dataReader con los registros.</param>
@@ -427,7 +428,7 @@ namespace Negocio.Core
                                                         TypeAttributes.AutoClass |
                                                         //TypeAttributes.Serializable |
                                                         TypeAttributes.Public,
-                                                        typeof(object));
+                                                        typeof(Negocio.Core.Entity));
         // =====================================================================================
         // Atributo XmlRootAttribute
         // =====================================================================================
@@ -514,6 +515,41 @@ namespace Negocio.Core
             FieldBuilder field = builder.DefineField(info2.DestFieldName,
                                                       info2.DataType,
                                                       FieldAttributes.Public);
+            // ==============================================================================================
+            // public abstract long Id { get; set; } esto es por si queremos hacer 
+            // _values.Cast<Entity>()
+            // ==============================================================================================
+            if (index == 0 && info2.SourcePropertyName == "Id" && info2.DestFieldName != "Id" )
+            {
+              var property = builder.DefineProperty("Id", PropertyAttributes.HasDefault, typeof(long), null);
+              var jsonIgnoreCtor = typeof(JsonIgnoreAttribute).GetConstructor(Type.EmptyTypes);
+              var jsonIgnoreAttrBuilder = new CustomAttributeBuilder(jsonIgnoreCtor, new object[0]);
+              property.SetCustomAttribute(jsonIgnoreAttrBuilder);
+
+              var getMethodBuilder = builder.DefineMethod("get_Id",
+                  MethodAttributes.Public | MethodAttributes.Virtual |
+                  MethodAttributes.SpecialName | MethodAttributes.HideBySig,
+                  typeof(long),
+                  Type.EmptyTypes);
+              var getIL = getMethodBuilder.GetILGenerator();
+              getIL.Emit(OpCodes.Ldarg_0);
+              getIL.Emit(OpCodes.Ldfld, field);
+              getIL.Emit(OpCodes.Ret);
+              property.SetGetMethod(getMethodBuilder);
+
+              var setMethodBuilder = builder.DefineMethod("set_Id",
+                  MethodAttributes.Public | MethodAttributes.Virtual | 
+                  MethodAttributes.SpecialName | MethodAttributes.HideBySig,
+                  null, // No retorna nada
+                  new Type[] { typeof(long) });
+              var setIL = setMethodBuilder.GetILGenerator();
+              setIL.Emit(OpCodes.Ldarg_0);
+              setIL.Emit(OpCodes.Ldarg_1);
+              setIL.Emit(OpCodes.Stfld, field);
+              setIL.Emit(OpCodes.Ret);
+              property.SetSetMethod(setMethodBuilder);
+            }
+
             generator2.Emit(OpCodes.Ldarg_0); // Destino
             generator2.Emit(OpCodes.Ldloc_0); // Origen 
             // ================================================================================
@@ -745,10 +781,23 @@ namespace Negocio.Core
     /// <returns>Una cadena de texto con los datos serializados.</returns>
     public string ToJsonString(bool associativeArray = false)
     {
-      if (_createObjects) __createAndFillObjects(_values);
+      if (_createObjects) CreateAndFillObjects();
       return Serialize(associativeArray ? _values.Cast<Entity>().ToDictionary(e => e.Id, e => (object)e)
                                         : _values);
     }
+
+    private IDictionary<long, object> ToDictionaryConReflexion()
+    {
+      var res = new Dictionary<long, object>();
+      if (_values == null || _values.Count == 0) return res;
+      var propertyInfo = _values[0].GetType().GetProperty("Id", BindingFlags.Public | BindingFlags.Instance);
+      if (propertyInfo == null) return res;     
+      foreach (var item in _values) {
+        res[Convert.ToInt64(propertyInfo.GetValue(item))] = item;
+      }
+      return res;
+    }
+
 
     /// <summary>
     /// Obtener la serialización de un objeto en formato JSON.
@@ -769,13 +818,14 @@ namespace Negocio.Core
     /// <summary>
     /// Método encargado de crear e inicializar las instancias de los objetos destino correspondientes
     /// </summary>
-    /// <param name="values"></param>
-    private void __createAndFillObjects(IList values)
+    public SmallXmlSerializer CreateAndFillObjects()
     {
-      _values = values.Cast<object>()
-                      .Select(o => Activator.CreateInstance(_targetType, new object[] { o }))
-                      .ToList();
+      if (!_createObjects) return this;
+      _values = _values.Cast<object>()
+                .Select(o => Activator.CreateInstance(_targetType, new object[] { o }))
+                .ToList();
       _createObjects = false;
+      return this;
     }
 
     /// <summary>
@@ -795,7 +845,7 @@ namespace Negocio.Core
 
     private static string ToCamelCase(string s)
     {
-      if (string.IsNullOrEmpty(s) || s.Length < 2)   return s;
+      if (string.IsNullOrEmpty(s) || s.Length < 2) return s;
       if (char.IsLower(s[0])) return s;
       return char.ToLower(s[0]) + s[1..];
     }

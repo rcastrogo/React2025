@@ -19,7 +19,7 @@ export const DISTRIBUIDORES_GET_ITEM = '/api/usuarios/distribuidores/{0}';
 export const DISTRIBUIDORES_GET_ITEMS = '/api/usuarios/distribuidores';
 export const DISTRIBUIDORES_GET_FIND_ITEMS_BY_TERM = '/api/usuarios/distribuidores/by/{0}';
 
-export const DISTRIBUIDORES_POST_VALIDATE = '/api/usuarios/distribuidores/validate';
+export const DISTRIBUIDORES_POST_VALIDATE = '/api/distribuidores/validate';
 
 export const ROLES_GET_ITEMS_BY_DISTRIBUIDOR = '/api/usuarios/roles/distribuidor/{0}';
 

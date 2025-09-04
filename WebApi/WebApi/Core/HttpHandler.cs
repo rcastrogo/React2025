@@ -6,8 +6,8 @@ namespace WebApi.Core.Handlers
 {
   public abstract class HttpHandler
   {
-    private ContextWrapper _contextWrapper = null;
-    protected Microsoft.Extensions.Logging.ILogger _logger = null;
+    private ContextWrapper _contextWrapper;
+    protected Microsoft.Extensions.Logging.ILogger?_logger;
 
     public HttpHandler(HttpContext httpContext)
     {
@@ -32,7 +32,7 @@ namespace WebApi.Core.Handlers
       return this;
     }
 
-    private string _body = null;
+    private string? _body;
     protected async Task<string> GetBodyAsync()
     {
       if (_body == null)

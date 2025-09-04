@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type MouseEventHandler, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEventHandler, type ReactNode } from "react";
 import useClickOutside, { usePageNavigation } from "../../hooks/useClickOutside";
 import { pol } from "../../utils/pol";
 
@@ -10,6 +10,7 @@ export interface option {
 }
 
 interface ComboBoxControlProps {
+    name?:string;
     options: option[] | undefined;
     onChange?: (value: string) => void;
     value?: string;
@@ -18,6 +19,7 @@ interface ComboBoxControlProps {
 }
 
 function ComboBoxControl({
+    name = '',
     options = [],
     onChange = (value: string) => console.log(value),
     value = '',
@@ -60,7 +62,7 @@ function ComboBoxControl({
         else if (!isOpen && (key === 'ArrowDown' || key === 'Enter' || key === ' ')) {
             e.preventDefault();
             setIsOpen(true);
-            setHighlightedIndex(find().index);
+            setHighlightedIndex(find.index);
             return;
         }
 
@@ -107,11 +109,12 @@ function ComboBoxControl({
         }
     }
 
-    const find = () => {
+    const find = useMemo(() => {
+        console.log( (name || 'ComboBoxControl') + '.find: Re-calculando...');
         const index = options.findIndex(opt => opt.value == value);
         const option = options[index];
-        return { index, option }
-    }
+        return { index, option };
+    }, [options, value]);
 
     useEffect(() => {
         console.log('ComboBoxControl.render');
@@ -122,7 +125,7 @@ function ComboBoxControl({
     }, [highlightedIndex]);
 
     useEffect(() => {
-        const {option, index} = find();
+        const {option, index} = find;
         if (isOpen) {
             setHighlightedIndex(index !== -1 ? index : 0);
             scrollIntoView(index)

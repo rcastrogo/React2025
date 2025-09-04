@@ -1,0 +1,132 @@
+<PolCodeGenProject version="3.0">
+  <ConnectionString>Provider=MSOLEDBSQL.1;Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TOLEDO;Persist Security Info=True;Integrated Security=SSPI</ConnectionString>
+  <GenerationDir>C:\Proyectos\React2025\CodeGenerator\</GenerationDir>
+  <CheckedEntities>[CategoriasProducto],[Departamentos],[Distribuidor],[EstadosPedido],[Monedas],[Paises],[RolesUsuario],[TiposDocumento],[TiposTransaccion],[RolDistribuidor]</CheckedEntities>
+  <Global>
+    <Key id="811D912A-DF6D-aaaa-AC08-4EBA1E61F91A" />
+  </Global>
+  <General>
+    <Key id="9A94A9C2-00BD-4e7f-961C-9615B6B1F4C2" />
+    <Key id="0CC72061-A301-4b7a-BD85-AFE08CC6DDF3" />
+    <Key id="E2EED933-C4CC-4f3f-AD19-2C368FE70709" />
+    <Key id="2D2A5D50-C6CB-4014-86A8-04A287605777" />
+  </General>
+  <Special />
+  <Entity itemName="Categoria" collectionName="Categorias" tableName="[CategoriasProducto]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Codigo" dbType="string" dbName="Codigo" maxlength="10" toString="S" />
+        <Property name="Descripcion" dbType="string" dbName="Descripcion" maxlength="50" toString="S" />
+        <Property name="Orden" dbType="int" dbName="Orden" maxlength="4" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="Departamento" collectionName="Departamentos" tableName="[Departamentos]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Codigo" dbType="string" dbName="Codigo" maxlength="10" toString="S" />
+        <Property name="Descripcion" dbType="string" dbName="Descripcion" maxlength="50" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="Distribuidor" collectionName="Distribuidores" tableName="[Distribuidor]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Nif" dbType="string" dbName="Nif" maxlength="15" toString="S" />
+        <Property name="Nombre" dbType="string" dbName="Nombre" maxlength="100" toString="S" />
+        <Property name="Email" dbType="string" dbName="Email" maxlength="100" toString="S" />
+        <Property name="Direccion" dbType="string" dbName="Direccion" maxlength="200" toString="S" />
+        <Property name="Ciudad" dbType="string" dbName="Ciudad" maxlength="50" toString="S" />
+        <Property name="PaisId" dbType="int" dbName="PaisId" maxlength="4" toString="S" />
+        <Property name="Telefono" dbType="string" dbName="Telefono" maxlength="20" toString="S" />
+        <Property name="CategoriaProductoId" dbType="int" dbName="CategoriaProductoId" maxlength="4" toString="S" />
+        <Property name="TipoDocumentoId" dbType="int" dbName="TipoDocumentoId" maxlength="4" toString="S" />
+        <Property name="TipoTransaccionId" dbType="int" dbName="TipoTransaccionId" maxlength="4" toString="S" />
+        <Property name="MonedaId" dbType="int" dbName="MonedaId" maxlength="4" toString="S" />
+        <Property name="Activo" dbType="int" dbName="Activo" maxlength="4" toString="S" />
+        <Property name="FechaAlta" dbType="DateTime" dbName="FechaAlta" maxlength="16" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="EstadoPedido" collectionName="EstadosPedidos" tableName="[EstadosPedido]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Codigo" dbType="string" dbName="Codigo" maxlength="10" toString="S" />
+        <Property name="Descripcion" dbType="string" dbName="Descripcion" maxlength="50" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="Moneda" collectionName="Monedas" tableName="[Monedas]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Codigo" dbType="string" dbName="Codigo" maxlength="3" toString="S" />
+        <Property name="Descripcion" dbType="string" dbName="Descripcion" maxlength="50" toString="S" />
+        <Property name="Simbolo" dbType="string" dbName="Simbolo" maxlength="5" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="Pais" collectionName="Paises" tableName="[Paises]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Codigo" dbType="string" dbName="Codigo" maxlength="3" toString="S" />
+        <Property name="Descripcion" dbType="string" dbName="Descripcion" maxlength="50" toString="S" />
+        <Property name="PrefijoTelefonico" dbType="string" dbName="PrefijoTelefonico" maxlength="5" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="RolUsuario" collectionName="RolesUsuario" tableName="[RolesUsuario]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Codigo" dbType="string" dbName="Codigo" maxlength="10" toString="S" />
+        <Property name="Descripcion" dbType="string" dbName="Descripcion" maxlength="50" toString="S" />
+        <Property name="NivelPermiso" dbType="int" dbName="NivelPermiso" maxlength="4" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="TipoDeDocumento" collectionName="TiposDeDocumento" tableName="[TiposDocumento]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Codigo" dbType="string" dbName="Codigo" maxlength="10" toString="S" />
+        <Property name="Descripcion" dbType="string" dbName="Descripcion" maxlength="50" toString="S" />
+        <Property name="Activo" dbType="boolean" dbName="Activo" maxlength="2" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="TipoDeTransaccion" collectionName="TiposDeTransaccion" tableName="[TiposTransaccion]">
+    <Properties>
+      <Bindables>
+        <Property name="Id" dbType="long" dbName="Id" maxlength="4" toString="S" />
+        <Property name="Codigo" dbType="string" dbName="Codigo" maxlength="10" toString="S" />
+        <Property name="Descripcion" dbType="string" dbName="Descripcion" maxlength="50" toString="S" />
+        <Property name="Naturaleza" dbType="string" dbName="Naturaleza" maxlength="3" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+  <Entity itemName="RolDistribuidor" collectionName="RolesDistribuidor" tableName="[RolDistribuidor]">
+    <Properties>
+      <Bindables>
+        <Property name="DistribuidorId" dbType="long" dbName="DistribuidorId" maxlength="4" toString="S" />
+        <Property name="RolesUsuarioId" dbType="int" dbName="RolesUsuarioId" maxlength="4" toString="S" />
+        <Property name="FechaDeCreacion" dbType="DateTime" dbName="FechaDeCreacion" maxlength="16" toString="S" />
+      </Bindables>
+      <NoBindables />
+    </Properties>
+  </Entity>
+</PolCodeGenProject>

@@ -1,6 +1,6 @@
 ﻿
 
-import { useRef, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import CollapsibleBox from "../../components/CollapsibleBox/CollapsibleBox.js";
 import AutocompleteControl from "../../components/lists/Autocomplete.js";
 import ComboBoxControl from "../../components/lists/ComboBox.js";
@@ -9,7 +9,7 @@ import { type NotificationData } from "../../components/Notifications/Notificati
 import PubSub from "../../components/Pubsub.js";
 import { NOTIFICATION_TYPES } from "../../constants";
 import useCachedData from "../../hooks/useCachedData";
-import useDistibuidor from "../../hooks/useDistribuidor";
+import useDistribuidor from "../../hooks/useDistribuidor";
 import { useModal } from "../../hooks/useModal.js";
 import { formatString } from "../../utils/core.js";
 import { pol } from "../../utils/pol.js";
@@ -69,8 +69,14 @@ const DistribuidoresHomePage = () => {
 
 
     const controlRef = useRef<HTMLDivElement>(null!);
-    const distribuidor = useDistibuidor();
+    const distribuidor = useDistribuidor();
     const paises = useRef(pol.arr(getPaises()!).toDictionary('id'));
+
+    const memo_paises = useMemo(() => {
+        return getPaises()?.map(o => {
+            return { data: o, value: o.id, label: o.descripcion };
+        })
+    }, []);
 
     // ==========================================================================================
     // Búsqueda de distribuidores
@@ -420,10 +426,8 @@ const DistribuidoresHomePage = () => {
                                     <div className="w3-col l2 m4 s12">
                                         <label className="w3-text-grey">País</label>
                                         <ComboBoxControl
-                                            options={
-                                                getPaises()?.map(o => {
-                                                    return { data: o, value: o.id, label: o.descripcion };
-                                                })}
+                                            name="cmb_paises"
+                                            options={memo_paises}
                                             resolve={optionRender}
                                             onChange={(item) => handleSelectChange('paisId', item)}
                                             value={String(target.paisId)}
@@ -432,6 +436,7 @@ const DistribuidoresHomePage = () => {
                                     <div className="w3-col l2 m4 s12">
                                         <label className="w3-text-grey">Cat. producto</label>
                                         <ComboBoxControl
+                                            name="cmb_categorias"
                                             options={getCategoriasProducto()?.map(o => {
                                                 return { data: o, value: o.id, label: o.descripcion };
                                             })}
@@ -443,6 +448,7 @@ const DistribuidoresHomePage = () => {
                                     <div className="w3-col l3 m6 s12">
                                         <label className="w3-text-grey">Tipo transacción</label>
                                         <ComboBoxControl
+                                            name="cmb_tipos_transaccion"
                                             options={getTiposTransaccion()?.map(o => {
                                                 return { data: o, value: o.id, label: o.descripcion };
                                             })}
@@ -454,6 +460,7 @@ const DistribuidoresHomePage = () => {
                                     <div className="w3-col l3 m6 s12">
                                         <label className="w3-text-grey">Moneda</label>
                                         <ComboBoxControl
+                                            name="cmb_monedas"
                                             options={getMonedas()?.map(o => {
                                                 return { data: o, value: o.id, label: o.descripcion };
                                             })}

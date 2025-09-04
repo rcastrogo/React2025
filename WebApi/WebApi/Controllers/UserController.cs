@@ -22,8 +22,7 @@ namespace WebApi.Controllers
   public class UserController : HttpHandler
   {
 
-    private IDbContextBuilder _dbContextBuilder = null;
-    private bool _disposed = false;
+    private IDbContextBuilder _dbContextBuilder;
 
     public UserController(HttpContext context, IDbContextBuilder dbContextBuilder) : base(context)
     {

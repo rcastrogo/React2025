@@ -16,7 +16,7 @@ namespace WebApi.Core.Logging
       _settings = settings;
     }
 
-    public IDisposable BeginScope<TState>(TState state)
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
     {
       return NoopDisposable.Instance;
     }
@@ -26,7 +26,7 @@ namespace WebApi.Core.Logging
       return true;
     }
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+    public void Log<TState>(LogLevel? logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
     {
 
       if (formatter == null) throw new ArgumentNullException(nameof(formatter));
@@ -52,6 +52,40 @@ namespace WebApi.Core.Logging
 
         }
       }
+    }
+
+    void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    {
+
+
+      if (formatter == null) throw new ArgumentNullException(nameof(formatter));
+
+      var message = formatter(state, exception);
+
+      if (string.IsNullOrEmpty(message)) return;
+
+      message = $"[{DateTime.Now.TimeOfDay}] [{_name}] {message}\n";
+
+      if (exception != null)
+      {
+        message += Environment.NewLine + Environment.NewLine + exception.ToString();
+      }
+
+      if (_settings.LogToConsole == true) Console.Write(message);
+
+      if (_settings.LogToFile == true)
+      {
+        try
+        {
+          var logPath = Path.Combine(Environment.CurrentDirectory, $"Logs\\{DateTime.Now:yyyyMMdd}.log.txt");
+          File.AppendAllText(logPath, message);
+        }
+        catch (Exception)
+        {
+          // Silenciar errores de escritura en el log
+        }
+      }
+
     }
 
     private class NoopDisposable : IDisposable

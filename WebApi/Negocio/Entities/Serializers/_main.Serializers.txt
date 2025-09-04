@@ -28,3 +28,32 @@ Long,~edad,edad_xxx
 #TypeInfo@System.Reflection.TypeInfo@Simple
 int,IsAbstract,a#
 String,FullName,name
+
+
+; ===========================================================
+; Distribuidores
+; ===========================================================
+#Distribuidores
+Long,Id,Id#
+String,Nif,Nif#
+String,Nombre,Nombre#
+String,Email,Email#
+String,Direccion,Direccion#
+String,Ciudad,Ciudad#
+Long,PaisId,PaisId#
+String,Telefono,Telefono#
+Long,CategoriaProductoId,CategoriaProductoId#
+Long,TipoDocumentoId,TipoDocumentoId#
+Long,TipoTransaccionId,TipoTransaccionId#
+Long,MonedaId,MonedaId#
+Integer,Activo,Activo#
+Date,FechaAlta,FechaAlta#
+
+
+; ===========================================================
+; RolesDistribuidor
+; ===========================================================
+#RolesDistribuidor
+Long,DistribuidorId,DistribuidorId#
+Long,RolesUsuarioId,RolesUsuarioId#
+Date,FechaDeCreacion,FechaDeCreacion#

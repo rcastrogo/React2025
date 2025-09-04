@@ -636,3 +636,25 @@
     //};
 
     //private class Motos : System.Collections.ObjectModel.Collection<Moto> { }
+
+
+
+    //var actions = new List<ServerAction> {
+//    new ServerAction("error", "El NIF es inválido."),
+//    new ServerAction("focus", "[name=nif]"),
+//    new ServerAction("alert", "Validación con errores."),
+//    //new ServerAction("publish", new {
+//    //  topic = "SHOW_INFO",
+//    //  data = "La validación ha fallado, pero la solicitud fue procesada."
+//    //}),
+//    //new ServerAction("navigate", "/about")
+//    new ServerAction("publish", new {
+//      topic = "SHOW_MODAL",
+//      data = new {
+//          title = "ReactApp",
+//          content = "Error en la validación!",
+//          showCloseButton =  true,
+//          allowManualClose = false
+//      }
+//    })
+//};

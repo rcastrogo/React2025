@@ -216,6 +216,10 @@ function CreditsScreen({
     const gameLoop = (currentTime: DOMHighResTimeStamp) => {
         const ctx = canvasRef.current?.getContext('2d', { willReadFrequently: true });
         if (!ctx) return;
+        if(canvasRef.current?.clientHeight == 0){
+            animationFrameId.current = requestAnimationFrame(gameLoop);
+            return;
+       }
 
         const dt = (currentTime - lastTime.current) / 1000;
         lastTime.current = currentTime;

@@ -71,7 +71,7 @@ const getRolesDistribuidor = (id: number) => fetchRolesDistribuidor(id);
 
 const validate = async (data: any) => postValidate(data);
 
-const useDistibuidor = () => {
+const useDistribuidor = () => {
 
     return {
         getDistribuidor,
@@ -83,7 +83,7 @@ const useDistibuidor = () => {
 
 }
 
-export default useDistibuidor;
+export default useDistribuidor;
 
 const github_dist = [
     {

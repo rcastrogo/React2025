@@ -9,6 +9,7 @@ export type SortCriterion<T> = {
 interface Config {
     write(key: string, value: string): Config;
     read(key: string): string | null;
+    readAll():Record<string, any>;
     remove(key:string): Config;
 }
 

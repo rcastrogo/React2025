@@ -10,7 +10,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "postbuild": "npm run copy-to-api",
-    "copy-to-api": "xcopy /E /Y /I dist\\* ..\\WebApi\\WebApi\\wwwroot\\app",
+    "copy-to-api": "xcopy /E /Y /I dist\\* ..\\WebApi\\WebApi\\wwwroot\\React2025",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -33,7 +33,8 @@
     "globals": "^16.2.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "vite-plugin-pwa": "^1.0.3"
   },
   "proxy": "https://localhost:7222",
   "homepage": "https://rcastrogo.github.io/React2025"

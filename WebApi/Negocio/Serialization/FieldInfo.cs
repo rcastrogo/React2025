@@ -54,7 +54,7 @@ namespace Negocio.Core
         "date" or "datetime"          => typeof(DateTime),
         "float" or "double"           => typeof(double),
         "decimal"                     => typeof(decimal),
-        "boolean"                     => typeof(Boolean),
+        "boolean" or "bool"           => typeof(Boolean),
         _ => throw new Exception("Tipo incorrecto")
       };
     }

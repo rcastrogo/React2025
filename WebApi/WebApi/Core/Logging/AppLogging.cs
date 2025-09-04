@@ -7,8 +7,8 @@ namespace WebApi.Core.Logging
   public static class AppLogging
   {
 
-    private static Microsoft.Extensions.Logging.ILoggerFactory _loggerFactory = null;
-    private static Microsoft.Extensions.Logging.ILogger _logger = null;
+    private static Microsoft.Extensions.Logging.ILoggerFactory? _loggerFactory;
+    private static Microsoft.Extensions.Logging.ILogger? _logger;
 
     public static void UsePolLogging(this WebApplication app)
     {
@@ -22,11 +22,11 @@ namespace WebApi.Core.Logging
 
       private Microsoft.Extensions.Logging.ILogger _logger = _loggerFactory.CreateLogger("WebApi.Negocio");
 
-      public override void Write(string message)
+      public override void Write(string? message)
       {
         _logger.LogInformation(message);
       }
-      public override void WriteLine(string message)
+      public override void WriteLine(string? message)
       {
         _logger.LogInformation(message);
       }

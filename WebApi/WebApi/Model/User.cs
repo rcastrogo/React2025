@@ -5,6 +5,10 @@ namespace WebApi.Model
 {
   public class User
   {
+
+    public User() {
+      Name = "";
+    } 
     public int Id { get; set; }
 
     [JsonPropertyName("Nombre")]

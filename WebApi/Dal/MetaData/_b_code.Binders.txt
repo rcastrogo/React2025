@@ -1,0 +1,80 @@
+
+
+ ; ===========================================================
+; Negocio.Entities.Categoria
+; ===========================================================
+#Negocio.Entities.Categoria
+ 0, _id                           , Integer
+ 1, _codigo                       
+ 2, _descripcion                  
+ 3, _orden                        , Integer
+
+
+; ===========================================================
+; Negocio.Entities.Departamento
+; ===========================================================
+#Negocio.Entities.Departamento
+ 0, _id                           , Integer
+ 1, _codigo                       
+ 2, _descripcion                  
+
+
+; ===========================================================
+; Negocio.Entities.EstadoPedido
+; ===========================================================
+#Negocio.Entities.EstadoPedido
+ 0, _id                           , Integer
+ 1, _codigo                       
+ 2, _descripcion                  
+
+
+; ===========================================================
+; Negocio.Entities.Moneda
+; ===========================================================
+#Negocio.Entities.Moneda
+ 0, _id                           , Integer
+ 1, _codigo                       
+ 2, _descripcion                  
+ 3, _simbolo                      
+
+
+; ===========================================================
+; Negocio.Entities.Pais
+; ===========================================================
+#Negocio.Entities.Pais
+ 0, _id                           , Integer
+ 1, _codigo                       
+ 2, _descripcion                  
+ 3, _prefijoTelefonico            
+
+
+; ===========================================================
+; Negocio.Entities.RolUsuario
+; ===========================================================
+#Negocio.Entities.RolUsuario
+ 0, _id                           , Integer
+ 1, _codigo                       
+ 2, _descripcion                  
+ 3, _nivelPermiso                 , Integer
+
+
+; ===========================================================
+; Negocio.Entities.TipoDeDocumento
+; ===========================================================
+#Negocio.Entities.TipoDeDocumento
+ 0, _id                           , Integer
+ 1, _codigo                       
+ 2, _descripcion                  
+ 3, _activo                       , boolean
+
+
+; ===========================================================
+; Negocio.Entities.TipoDeTransaccion
+; ===========================================================
+#Negocio.Entities.TipoDeTransaccion
+ 0, _id                           , Integer
+ 1, _codigo                       
+ 2, _descripcion                  
+ 3, _naturaleza                   
+
+

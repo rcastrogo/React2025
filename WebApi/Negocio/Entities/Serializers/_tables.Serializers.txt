@@ -1,0 +1,78 @@
+﻿; ===========================================================
+; Categorias
+; ===========================================================
+#Categorias
+Long,Id,Id#
+String,Codigo,Codigo#
+String,Descripcion,Descripcion#
+Integer,Orden,Orden#
+
+
+; ===========================================================
+; Departamentos
+; ===========================================================
+#Departamentos
+Long,Id,Id#
+String,Codigo,Codigo#
+String,Descripcion,Descripcion#
+
+; ===========================================================
+; EstadosPedidos
+; ===========================================================
+#EstadosPedidos
+Long,Id,Id#
+String,Codigo,Codigo#
+String,Descripcion,Descripcion#
+
+
+; ===========================================================
+; Monedas
+; ===========================================================
+#Monedas
+Long,Id,Id#
+String,Codigo,Codigo#
+String,Descripcion,Descripcion#
+String,Simbolo,Simbolo#
+
+
+; ===========================================================
+; Paises
+; ===========================================================
+#Paises
+Long,Id,Id#
+String,Codigo,Codigo#
+String,Descripcion,Descripcion#
+String,PrefijoTelefonico,PrefijoTelefonico#
+
+
+; ===========================================================
+; RolesUsuario
+; ===========================================================
+#RolesUsuario
+Long,Id,Id#
+String,Codigo,Codigo#
+String,Descripcion,Descripcion#
+Integer,NivelPermiso,NivelPermiso#
+
+
+; ===========================================================
+; TiposDeDocumento
+; ===========================================================
+#TiposDeDocumento@Negocio.Entities.TipoDeDocumento@Entity
+Long,Id,id#
+String,Codigo,cod#
+String,Descripcion,d#
+Bool,Activo,a
+
+
+; ===========================================================
+; TiposDeTransaccion
+; ===========================================================
+#TiposDeTransaccion
+Long,Id,Id#
+String,Codigo,Codigo#
+String,Descripcion,Descripcion#
+String,Naturaleza,Naturaleza#
+
+
+

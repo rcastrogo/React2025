@@ -85,6 +85,10 @@ function MobileMenu({ children }: MobileMenuProps) {
                         className="pol-collapsible-box-plain-white"
                         initialContent=
                         <div className="w3-center">
+                            <button data-entry onClick={() => window.open('https://localhost:7222/api/MasterDataTables/Departamentos')}
+                                className="w3-quarter w3-button w3-hover-blue">
+                                Backend
+                            </button>
                             {
                                 configService.enlaces.map((item) => (
                                     item.id > 1 &&

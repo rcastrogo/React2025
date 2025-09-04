@@ -1,0 +1,79 @@
+
+; ===========================================================
+; Dal.Repositories.CategoriasRepository
+; ===========================================================
+#Dal.Repositories.CategoriasRepository.OrderBy%Id ASC
+#Dal.Repositories.CategoriasRepository.Delete%DELETE FROM [CategoriasProducto] WHERE Id={0}
+#Dal.Repositories.CategoriasRepository.Select%SELECT Id, Codigo, Descripcion, Orden FROM [CategoriasProducto]
+#Dal.Repositories.CategoriasRepository.Insert%INSERT INTO [CategoriasProducto] (Codigo, Descripcion, Orden) VALUES({0}, {1}, {2}) ; SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.CategoriasRepository.Update%UPDATE [CategoriasProducto] SET Codigo = {1}, Descripcion = {2}, Orden = {3} WHERE Id={0}
+
+
+; ===========================================================
+; Dal.Repositories.DepartamentosRepository
+; ===========================================================
+#Dal.Repositories.DepartamentosRepository.OrderBy%Id ASC
+#Dal.Repositories.DepartamentosRepository.Delete%DELETE FROM [Departamentos] WHERE Id={0}
+#Dal.Repositories.DepartamentosRepository.Select%SELECT Id, Codigo, Descripcion FROM [Departamentos]
+#Dal.Repositories.DepartamentosRepository.Insert%INSERT INTO [Departamentos] (Codigo, Descripcion) VALUES({0}, {1}) ; SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.DepartamentosRepository.Update%UPDATE [Departamentos] SET Codigo = {1}, Descripcion = {2} WHERE Id={0}
+
+
+; ===========================================================
+; Dal.Repositories.EstadosPedidosRepository
+; ===========================================================
+#Dal.Repositories.EstadosPedidosRepository.OrderBy%Id ASC
+#Dal.Repositories.EstadosPedidosRepository.Delete%DELETE FROM [EstadosPedido] WHERE Id={0}
+#Dal.Repositories.EstadosPedidosRepository.Select%SELECT Id, Codigo, Descripcion FROM [EstadosPedido]
+#Dal.Repositories.EstadosPedidosRepository.Insert%INSERT INTO [EstadosPedido] (Codigo, Descripcion) VALUES({0}, {1}) ; SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.EstadosPedidosRepository.Update%UPDATE [EstadosPedido] SET Codigo = {1}, Descripcion = {2} WHERE Id={0}
+
+
+; ===========================================================
+; Dal.Repositories.MonedasRepository
+; ===========================================================
+#Dal.Repositories.MonedasRepository.OrderBy%Id ASC
+#Dal.Repositories.MonedasRepository.Delete%DELETE FROM [Monedas] WHERE Id={0}
+#Dal.Repositories.MonedasRepository.Select%SELECT Id, Codigo, Descripcion, Simbolo FROM [Monedas]
+#Dal.Repositories.MonedasRepository.Insert%INSERT INTO [Monedas] (Codigo, Descripcion, Simbolo) VALUES({0}, {1}, {2}) ; SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.MonedasRepository.Update%UPDATE [Monedas] SET Codigo = {1}, Descripcion = {2}, Simbolo = {3} WHERE Id={0}
+
+
+; ===========================================================
+; Dal.Repositories.PaisesRepository
+; ===========================================================
+#Dal.Repositories.PaisesRepository.OrderBy%Id ASC
+#Dal.Repositories.PaisesRepository.Delete%DELETE FROM [Paises] WHERE Id={0}
+#Dal.Repositories.PaisesRepository.Select%SELECT Id, Codigo, Descripcion, PrefijoTelefonico FROM [Paises]
+#Dal.Repositories.PaisesRepository.Insert%INSERT INTO [Paises] (Codigo, Descripcion, PrefijoTelefonico) VALUES({0}, {1}, {2}) ; SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.PaisesRepository.Update%UPDATE [Paises] SET Codigo = {1}, Descripcion = {2}, PrefijoTelefonico = {3} WHERE Id={0}
+
+
+; ===========================================================
+; Dal.Repositories.RolesUsuarioRepository
+; ===========================================================
+#Dal.Repositories.RolesUsuarioRepository.OrderBy%Id ASC
+#Dal.Repositories.RolesUsuarioRepository.Delete%DELETE FROM [RolesUsuario] WHERE Id={0}
+#Dal.Repositories.RolesUsuarioRepository.Select%SELECT Id, Codigo, Descripcion, NivelPermiso FROM [RolesUsuario]
+#Dal.Repositories.RolesUsuarioRepository.Insert%INSERT INTO [RolesUsuario] (Codigo, Descripcion, NivelPermiso) VALUES({0}, {1}, {2}) ; SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.RolesUsuarioRepository.Update%UPDATE [RolesUsuario] SET Codigo = {1}, Descripcion = {2}, NivelPermiso = {3} WHERE Id={0}
+
+
+; ===========================================================
+; Dal.Repositories.TiposDeDocumentoRepository
+; ===========================================================
+#Dal.Repositories.TiposDeDocumentoRepository.OrderBy%Id ASC
+#Dal.Repositories.TiposDeDocumentoRepository.Delete%DELETE FROM [TiposDocumento] WHERE Id={0}
+#Dal.Repositories.TiposDeDocumentoRepository.Select%SELECT Id, Codigo, Descripcion, Activo FROM [TiposDocumento]
+#Dal.Repositories.TiposDeDocumentoRepository.Insert%INSERT INTO [TiposDocumento] (Codigo, Descripcion, Activo) VALUES({0}, {1}, {2}) ; SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.TiposDeDocumentoRepository.Update%UPDATE [TiposDocumento] SET Codigo = {1}, Descripcion = {2}, Activo = {3} WHERE Id={0}
+
+
+; ===========================================================
+; Dal.Repositories.TiposDeTransaccionRepository
+; ===========================================================
+#Dal.Repositories.TiposDeTransaccionRepository.OrderBy%Id ASC
+#Dal.Repositories.TiposDeTransaccionRepository.Delete%DELETE FROM [TiposTransaccion] WHERE Id={0}
+#Dal.Repositories.TiposDeTransaccionRepository.Select%SELECT Id, Codigo, Descripcion, Naturaleza FROM [TiposTransaccion]
+#Dal.Repositories.TiposDeTransaccionRepository.Insert%INSERT INTO [TiposTransaccion] (Codigo, Descripcion, Naturaleza) VALUES({0}, {1}, {2}) ; SELECT CAST(SCOPE_IDENTITY() AS BIGINT);
+#Dal.Repositories.TiposDeTransaccionRepository.Update%UPDATE [TiposTransaccion] SET Codigo = {1}, Descripcion = {2}, Naturaleza = {3} WHERE Id={0}

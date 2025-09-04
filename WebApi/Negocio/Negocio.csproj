@@ -14,9 +14,11 @@
 
   <ItemGroup>
     <None Remove="Entities\Serializers\_main.Serializers.txt" />
+    <None Remove="Entities\Serializers\_tables.Serializers.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Entities\Serializers\_tables.Serializers.txt" />
     <EmbeddedResource Include="Entities\Serializers\_main.Serializers.txt" />
   </ItemGroup>
 
