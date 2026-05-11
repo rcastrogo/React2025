@@ -20,7 +20,7 @@ public enum ApiResult
 /// </summary>
 public record ServerAction(
     [property: JsonPropertyName("type")] string Type,
-    [property: JsonPropertyName("payload")] object Payload
+    [property: JsonPropertyName("payload")] object? Payload
 );
 
 /// <summary>

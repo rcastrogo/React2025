@@ -34,13 +34,13 @@ namespace WebApi.Core.Logging
 
       if (string.IsNullOrEmpty(message)) return;
 
-      message = $"[{DateTime.Now.TimeOfDay.ToString()}] [{_name}] {message}\n";
+      message = $"[{DateTime.Now.TimeOfDay.ToString()}] [{_name}] {message}";
 
       if (exception != null) message += Environment.NewLine +
                                         Environment.NewLine +
                                         exception.ToString();
 
-      if (_settings.LogToConsole == true) Console.Write(message);
+      if (_settings.LogToConsole == true) Console.WriteLine(message);
       if (_settings.LogToFile == true)
       {
         try
@@ -64,14 +64,14 @@ namespace WebApi.Core.Logging
 
       if (string.IsNullOrEmpty(message)) return;
 
-      message = $"[{DateTime.Now.TimeOfDay}] [{_name}] {message}\n";
+      message = $"[{DateTime.Now.TimeOfDay}] [{_name}] {message}";
 
       if (exception != null)
       {
         message += Environment.NewLine + Environment.NewLine + exception.ToString();
       }
 
-      if (_settings.LogToConsole == true) Console.Write(message);
+      if (_settings.LogToConsole == true) Console.WriteLine(message);
 
       if (_settings.LogToFile == true)
       {

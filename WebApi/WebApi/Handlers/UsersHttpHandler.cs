@@ -47,9 +47,20 @@ namespace WebApi.Handlers
           return;
         }
         var __result = __proc.Invoke(HttpContext);
+
+        object resultToSerialize = __result;
+        if (__result is Task task)
+        {
+          await task.ConfigureAwait(false);
+          var resultProperty = task.GetType().GetProperty("Result");
+          resultToSerialize = "";
+          if (resultProperty != null)
+            resultToSerialize = resultProperty.GetValue(task) ?? "";
+        }
+
         HttpContext.Response.ContentType = MediaTypeNames.Application.Json;
         HttpContext.Response.StatusCode = StatusCodes.Status200OK;
-        await HttpContext.Response.WriteAsJsonAsync(__result);
+        await HttpContext.Response.WriteAsJsonAsync(resultToSerialize);
       }
       catch (Exception ex)
       {

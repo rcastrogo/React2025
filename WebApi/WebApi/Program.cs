@@ -19,6 +19,10 @@ var builder = WebApplication.CreateBuilder(args);
 // =========================================================================================
 var _appSection = builder.Configuration.GetSection("AppSettings");
 var _appSettings = _appSection.Get<AppSettings>();
+if (_appSettings == null)
+    throw new InvalidOperationException(
+      "La sección 'AppSettings' no se encuentra o está vacía en appsettings.json"
+    );
 
 // =========================================================================================
 // Configurar los origenes de datos
@@ -34,21 +38,25 @@ builder.Services.Configure<JsonOptions>(options => {
 });
 
 builder.Services.AddScoped<IDbContextBuilder, DbContextBuilder>();
-builder.Services.AddSingleton<AppSettings>(_appSection.Get<AppSettings>()); // AppSettings
-builder.Services.Configure<AppSettings>(_appSection);                       // IOptions<AppSettings>
+builder.Services.AddSingleton<AppSettings>(_appSettings); // AppSettings
+builder.Services.Configure<AppSettings>(_appSection);     // IOptions<AppSettings>
 
 // =========================================================================================
 // Logging
 // =========================================================================================
 builder.Logging.ClearProviders();
 builder.Services.AddSingleton<ILoggerProvider, CustomLoggerProvider>();
+//builder.Logging.AddConsole();
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("PermitirReact",
   policy =>
   {
-    policy.WithOrigins("http://localhost:5173")
-          .AllowAnyOrigin()
+    policy.WithOrigins(
+            "http://localhost:5173",
+            "https://rcg-framework.vercel.app"
+           )
+          //.AllowAnyOrigin()
           .AllowAnyHeader()
           .AllowAnyMethod();
   });
@@ -69,12 +77,12 @@ app.UseCors("PermitirReact");
 // =========================================================================================
 // Development
 // =========================================================================================
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 // =========================================================================================
 // Routes
@@ -88,7 +96,7 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/version", async context => {
   context.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
   context.Response.ContentType = "text/html";
-  await context.Response.WriteAsync("<h2>Version: 1.0</h2>"); 
+  await context.Response.WriteAsync("<h2>Version: 2.0</h2>"); 
 });
 
 // =========================================================================================

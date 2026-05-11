@@ -7,7 +7,7 @@ namespace WebApi.Core.Handlers
   public abstract class HttpHandler
   {
     private ContextWrapper _contextWrapper;
-    protected Microsoft.Extensions.Logging.ILogger?_logger;
+    protected Microsoft.Extensions.Logging.ILogger? _logger;
 
     public HttpHandler(HttpContext httpContext)
     {
