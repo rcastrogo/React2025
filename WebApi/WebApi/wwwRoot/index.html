@@ -1,37 +1,113 @@
 ﻿<!DOCTYPE html>
-<html>
-<head runat="server">
-  <title>Página principal</title>
+<html lang="es">
+<head>
+  <title>WebApi - Página principal</title>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="./css/w3.css">
-  <style type="text/css" media="screen">
-  </style>
 </head>
-<body>
-  <form id="form1">
-    <h1 class="w3-teal w3-center">WebApi - Index page</h1>
-    
-    <div class="w3-container">
-      <a href="/swagger/index.html" target="_blank">/swagger</a><br />
+<body class="bg-gray-100 min-h-screen">
 
+  <!-- Header -->
+  <header class="bg-teal-600 text-white py-4 shadow-md">
+    <h1 class="text-2xl font-bold text-center">WebApi - Index Page</h1>
+  </header>
 
-      <h2 class="w3-gray">Configuración de "Routes"</h2>
-      <a href="/version" target="_blank">/version</a><br />
-      <a href="/users" target="_blank">/users</a><br />
-      <a href="/users/5" target="_blank">/users/{id}</a><br /><br />
+  <main class="max-w-5xl mx-auto p-6 space-y-6">
 
-      <a href="/api/usuarios/tables/departamento" target="_blank">/api//usuarios/tables/departamento</a><br /><br />
+    <!-- Swagger -->
+    <section class="bg-white rounded-lg shadow p-5">
+      <h2 class="text-lg font-semibold text-gray-700 mb-3">
+        <i class="fa fa-book"></i> Documentación
+      </h2>
+      <a href="/swagger/index.html" target="_blank"
+         class="text-teal-600 hover:underline font-medium">/swagger</a>
+    </section>
 
-      <a href="/ashx/users?action=getItems" target="_blank">/ashx/users?action=getItems</a><br />
-      <a href="/ashx/users?action=getItem&id=5" target="_blank">/ashx/users?action=getItem&Id=5</a><br />
-      <a href="/ashx/users?action=delete&id=5" target="_blank">/ashx/users?action=delete&Id=5</a><br />
-      <a href="/ashx/users?action=new&nombre=Pepe" target="_blank">/ashx/users?action=new&nombre=Pepe</a><br />
-      <a href="/ashx/users?action=save&id=5&nombre=Pepe55" target="_blank">/ashx/users?action=save&id=5&nombre=Pepe55</a><br />
+    <!-- Routes -->
+    <section class="bg-white rounded-lg shadow p-5">
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-3">
+        <i class="fa fa-link"></i> Configuración de Routes
+      </h2>
+      <ul class="space-y-1">
+        <li><a href="/version" target="_blank" class="text-blue-600 hover:underline">/version</a></li>
+        <li><a href="/users" target="_blank" class="text-blue-600 hover:underline">/users</a></li>
+        <li><a href="/users/5" target="_blank" class="text-blue-600 hover:underline">/users/{id}</a></li>
+      </ul>
+    </section>
 
-    </div>
-  </form>
+    <!-- API Usuarios -->
+    <section class="bg-white rounded-lg shadow p-5">
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-3">
+        <i class="fa fa-users"></i> API Usuarios
+      </h2>
+      <ul class="space-y-1">
+        <li><a href="/api/usuarios" target="_blank" class="text-blue-600 hover:underline">GET /api/usuarios</a></li>
+        <li><a href="/api/usuarios/5" target="_blank" class="text-blue-600 hover:underline">GET /api/usuarios/{id}</a></li>
+        <li><a href="/api/usuarios/tables/departamentos" target="_blank" class="text-blue-600 hover:underline">GET /api/usuarios/tables/departamentos</a></li>
+        
+        <li><a href="/api/usuarios/distribuidores" target="_blank" class="text-blue-600 hover:underline">GET /api/usuarios/distribuidores</a></li>
+        <li><a href="/api/usuarios/distribuidores/by/madrid" target="_blank" class="text-blue-600 hover:underline">GET /api/usuarios/distribuidores/by/a</a></li>
+        <li><a href="/api/usuarios/distribuidores/1" target="_blank" class="text-blue-600 hover:underline">GET /api/usuarios/distribuidores/4</a></li>
+        <li><a href="/api/usuarios/roles/distribuidor/1" target="_blank" class="text-blue-600 hover:underline">GET /api/usuarios/roles/distribuidor/5</a></li>
+      </ul>
+    </section>
+
+    <!-- Handler ASHX -->
+    <section class="bg-white rounded-lg shadow p-5">
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-3">
+        <i class="fa fa-cogs"></i> HttpHandler (ashx)
+      </h2>
+      <ul class="space-y-1">
+        <li><a href="/ashx/users?action=getItems" target="_blank" class="text-blue-600 hover:underline">/ashx/users?action=getItems</a></li>
+        <li><a href="/ashx/users?action=getItem&id=5" target="_blank" class="text-blue-600 hover:underline">/ashx/users?action=getItem&id=5</a></li>
+        <li><a href="/ashx/users?action=delete&id=5" target="_blank" class="text-blue-600 hover:underline">/ashx/users?action=delete&id=5</a></li>
+        <li><a href="/ashx/users?action=new&nombre=Pepe" target="_blank" class="text-blue-600 hover:underline">/ashx/users?action=new&nombre=Pepe</a></li>
+        <li><a href="/ashx/users?action=save&id=5&nombre=Pepe55" target="_blank" class="text-blue-600 hover:underline">/ashx/users?action=save&id=5&nombre=Pepe55</a></li>
+      </ul>
+    </section>
+
+    <!-- Razor Page: Distribuidores -->
+    <section class="bg-white rounded-lg shadow p-5">
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-3">
+        <i class="fa fa-file-text"></i> Razor Page - Distribuidores
+      </h2>
+      <div class="mb-2">
+        <a href="/Distribuidores" target="_blank"
+           class="inline-block bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 text-sm font-medium">
+          Ver página completa
+        </a>
+      </div>
+      <h3 class="text-sm font-semibold text-gray-500 uppercase mt-4 mb-2">Handlers JSON</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
+        <a href="/Distribuidores?handler=Usuarios" target="_blank" class="text-blue-600 hover:underline">Usuarios</a>
+        <a href="/Distribuidores?handler=Departamentos" target="_blank" class="text-blue-600 hover:underline">Departamentos</a>
+        <a href="/Distribuidores?handler=Departamento&id=1" target="_blank" class="text-blue-600 hover:underline">Departamento (id=1)</a>
+        <a href="/Distribuidores?handler=Categorias" target="_blank" class="text-blue-600 hover:underline">Categorías</a>
+        <a href="/Distribuidores?handler=Categoria&id=1" target="_blank" class="text-blue-600 hover:underline">Categoría (id=1)</a>
+        <a href="/Distribuidores?handler=EstadosPedidos" target="_blank" class="text-blue-600 hover:underline">Estados de Pedidos</a>
+        <a href="/Distribuidores?handler=EstadoPedido&id=1" target="_blank" class="text-blue-600 hover:underline">Estado de Pedido (id=1)</a>
+        <a href="/Distribuidores?handler=Monedas" target="_blank" class="text-blue-600 hover:underline">Monedas</a>
+        <a href="/Distribuidores?handler=Moneda&id=1" target="_blank" class="text-blue-600 hover:underline">Moneda (id=1)</a>
+        <a href="/Distribuidores?handler=Paises" target="_blank" class="text-blue-600 hover:underline">Países</a>
+        <a href="/Distribuidores?handler=Pais&id=1" target="_blank" class="text-blue-600 hover:underline">País (id=1)</a>
+        <a href="/Distribuidores?handler=RolesUsuario" target="_blank" class="text-blue-600 hover:underline">Roles de Usuario</a>
+        <a href="/Distribuidores?handler=RolUsuario&id=1" target="_blank" class="text-blue-600 hover:underline">Rol de Usuario (id=1)</a>
+        <a href="/Distribuidores?handler=TiposDeDocumento" target="_blank" class="text-blue-600 hover:underline">Tipos de Documento</a>
+        <a href="/Distribuidores?handler=TipoDeDocumento&id=1" target="_blank" class="text-blue-600 hover:underline">Tipo de Documento (id=1)</a>
+        <a href="/Distribuidores?handler=TiposDeTransaccion" target="_blank" class="text-blue-600 hover:underline">Tipos de Transacción</a>
+        <a href="/Distribuidores?handler=TipoDeTransaccion&id=1" target="_blank" class="text-blue-600 hover:underline">Tipo de Transacción (id=1)</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-400 text-sm py-4">
+    WebApi &copy; 2026
+  </footer>
 
 </body>
 </html>

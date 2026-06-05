@@ -62,7 +62,7 @@ builder.Services.AddCors(options =>
   });
 });
 
-
+builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -127,5 +127,5 @@ AppLogging.Log("WebApi presta y dispuesta!!!");
 
 
 app.MapControllers(); // Esto activa los controladores RESTful
-
+app.MapRazorPages();
 app.Run();
