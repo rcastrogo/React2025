@@ -1,0 +1,304 @@
+// TreeViewerComponent – árbol jerárquico con nodos expandibles y selección.
+(function () {
+
+  if (!VanillaReactive) {
+    console.error('VanillaReactive no está definido.');
+    return;
+  }
+
+  const { BaseComponent, buildAndInterpolate, registerComponent } = VanillaReactive;
+  const { $, build } = VanillaReactive.dom;
+
+  class TreeViewerComponent extends BaseComponent {
+
+    constructor(ctx) {
+      super(ctx);
+      this.plusIconName = 'plus';
+      this.minusIconName = 'minus';
+      this.showCheckbox = false;
+      this.showIcons = false;
+      this.nodeMap = new Map();
+
+      this.root = {
+        treeId: 'root',
+        name: 'Root',
+        checked: false,
+        expanded: true,
+        depth: 0,
+        children: [
+          {
+            treeId: 'child-1',
+            name: 'Child 1',
+            checked: false,
+            depth: 1,
+            rows: [],
+          },
+        ],
+      };
+    }
+
+    init(ctx) {
+      super.init(ctx);
+      this.plusIconName = this.props.plusIconName ?? this.plusIconName;
+      this.minusIconName = this.props.minusIconName ?? this.minusIconName;
+      this.showCheckbox = this.props.showCheckbox === 'true';
+      this.showIcons = this.props.showIcons === 'true';
+    }
+
+    render(changedProp) {
+      if (changedProp && this.element) return this.element;
+      if (!this.root) return null;
+
+      const template = `
+        <div class="flex flex-col w-full">
+          <slot name="root"></slot>
+        </div>
+      `;
+      const slottedNodes = {
+        root: [this.buildNodeElement(this.root)],
+      };
+      return buildAndInterpolate(template, { slottedNodes });
+    }
+
+    destroy() {
+      this.nodeMap.clear();
+      super.destroy();
+    }
+
+    buildNodeElement(node) {
+      const isOpen = node.expanded ?? false;
+      const hasChildren = (node.children?.length ?? 0) > 0;
+      const hasRows = (node.rows?.length ?? 0) > 0;
+      const isExpandable = hasChildren || hasRows;
+
+      const rowNodes = [];
+      const containerNodes = [];
+
+      if (this.nodeRenderer) {
+        rowNodes.push(build('div', { innerHTML: this.nodeRenderer(node, isOpen, isExpandable) }, true));
+      } else {
+        rowNodes.push(this.defaultNodeRenderer(node, isOpen, isExpandable));
+      }
+
+      if (hasChildren) {
+        for (const child of node.children) {
+          child.parent = node;
+          containerNodes.push(this.buildNodeElement(child));
+        }
+      }
+
+      if (hasRows) {
+        const leafContainer = this.buildLeafContent(node);
+        leafContainer.classList.add('ml-3');
+        leafContainer.onclick = (ev) => {
+          this.handleNodeClick(leafContainer, ev, node.treeId, true);
+        };
+        containerNodes.push(leafContainer);
+      }
+
+      const wrapperTemplate = `
+        <div class="flex flex-col w-full">
+          <div
+            data-tree-row
+            data-node-id="{node.treeId}"
+            class="cursor-pointer"
+            on-click="handleNodeClick:@node.treeId">
+            <slot name="row"></slot>
+          </div>
+          <div
+            data-tree-container
+            data-node-id="{node.treeId}"
+            class="flex flex-col ml-2.5 overflow-hidden {isOpen | iif : '' : 'hidden'}"
+          >
+            <slot name="container"></slot>
+          </div>
+        </div>
+      `;
+
+      const wrapper = buildAndInterpolate(
+        wrapperTemplate,
+        {
+          ...this,
+          node,
+          isOpen,
+          slottedNodes: {
+            row: rowNodes,
+            container: containerNodes,
+          },
+        }
+      );
+
+      const iconPlus = $('[data-tree-icon-plus]', wrapper).one();
+      const iconMinus = $('[data-tree-icon-minus]', wrapper).one();
+      const checkbox = $('input[type="checkbox"]', wrapper).one();
+      const container = $('[data-tree-container]', wrapper).one();
+      this.nodeMap.set(node.treeId, { container, iconPlus, iconMinus, checkbox, node });
+
+      return wrapper;
+    }
+
+    handleNodeClick(_el, ev, treeId, isLeafClick) {
+      const entry = this.nodeMap.get(treeId);
+      if (!entry) return;
+
+      if (isLeafClick) {
+        const target = ev.target instanceof Element ? ev.target.closest('[data-tree-leaf-row]') : null;
+        if (!target) return;
+        if (this.click) this.click(target, ev, entry.node);
+        return;
+      }
+
+      const target = ev.target;
+      const { container, iconPlus, iconMinus, checkbox, node } = entry;
+
+      if (target === checkbox || (target instanceof Element && target.closest('input[type="checkbox"]'))) {
+        const checked = checkbox?.checked ?? false;
+        this.setChecked(node, checked);
+        this.updateAncestors(node);
+        if (this.nodeSelect) this.nodeSelect(node, checked);
+        return;
+      }
+
+      node.expanded = !(node.expanded ?? false);
+      container.classList.toggle('hidden', !node.expanded);
+      if (iconPlus) iconPlus.style.display = node.expanded ? 'none' : '';
+      if (iconMinus) iconMinus.style.display = node.expanded ? '' : 'none';
+      if (this.nodeToggle) this.nodeToggle(node);
+    }
+
+    setChecked(node, checked) {
+      node.checked = checked;
+      node.indeterminate = false;
+      this.syncCheckbox(node);
+      for (const child of node.children ?? []) {
+        this.setChecked(child, checked);
+      }
+    }
+
+    updateAncestors(node) {
+      let current = node.parent;
+      while (current) {
+        const children = current.children ?? [];
+        const allChecked = children.length > 0 && children.every(c => c.checked && !c.indeterminate);
+        const noneChecked = children.every(c => !c.checked && !c.indeterminate);
+        current.checked = allChecked;
+        current.indeterminate = !allChecked && !noneChecked;
+        this.syncCheckbox(current);
+        current = current.parent;
+      }
+    }
+
+    syncCheckbox(node) {
+      const entry = this.nodeMap.get(node.treeId);
+      if (!entry?.checkbox) return;
+      entry.checkbox.checked = node.checked;
+      entry.checkbox.indeterminate = node.indeterminate ?? false;
+    }
+
+    expandAll() { this.setAllExpanded(true); }
+    collapseAll() { this.setAllExpanded(false); }
+
+    setAllExpanded(expanded) {
+      for (const [, entry] of this.nodeMap) {
+        entry.node.expanded = expanded;
+        entry.container.classList.toggle('hidden', !expanded);
+        if (entry.iconPlus) entry.iconPlus.style.display = expanded ? 'none' : '';
+        if (entry.iconMinus) entry.iconMinus.style.display = expanded ? '' : 'none';
+      }
+    }
+
+    defaultNodeRenderer(node, isOpen, hasChildren) {
+      const template = `
+        <div class="flex items-center gap-2 py-1.5 px-2 hover:bg-gray-50 dark:hover:bg-slate-800
+            rounded-lg transition-all group">
+          @if(!hasChildren)
+            <span class="size-3.5"></span>
+          @endif
+          @if(hasChildren)
+            <span data-tree-icon-plus style="{isOpen | hide}">
+              <i data-icon="{plus}" class="size-3.5"></i>
+            </span>
+            <span data-tree-icon-minus style="{isOpen | show}">
+              <i data-icon="{minus}" class="size-3.5"></i>
+            </span>
+          @endif
+          @if(showIcons)
+            <i data-icon="folder" class="size-3.5"></i>
+          @endif
+          @if(showCheckbox)
+            <input type="checkbox" />
+          @endif
+          <span class="text-sm font-semibold">
+            {node.name}
+          </span>
+          @if(count===0)
+            <span class="ml-auto text-xs text-gray-400 text-center min-w-5 h-5">
+              -
+            </span>
+          @endif
+          @if(count)
+            <span class="ml-auto inline-flex items-center justify-center min-w-5 h-5 text-[11px]
+              text-white bg-gray-700 rounded-full px-1">
+              {count}
+            </span>
+          @endif
+        </div>
+      `;
+      return buildAndInterpolate(template, {
+        plus: this.plusIconName,
+        minus: this.minusIconName,
+        showCheckbox: this.showCheckbox ?? true,
+        showIcons: this.showIcons ?? true,
+        isOpen,
+        node,
+        hasChildren,
+        count: this.countDescendantRows(node),
+      }) ?? document.createElement('div');
+    }
+
+    buildLeafContent(node) {
+      const fragment = document.createElement('div');
+      if (this.leafRenderer) {
+        const html = this.leafRenderer(node);
+        const el = build('div', { innerHTML: html });
+        while (el.firstChild) fragment.appendChild(el.firstChild);
+        return fragment;
+      }
+      const rows = node.rows ?? [];
+      rows.forEach((row, index) => {
+        const data = row;
+        const name = String(data.name ?? data.label ?? data.title ?? '');
+        const template = `
+          <div
+            data-tree-leaf-row
+            data-row-id="${data.id ?? crypto.randomUUID()}"
+            data-row-index="${index}"
+            class="text-sm flex items-center gap-2 px-2 py-1.5 mr-8
+              rounded ml-2 text-slate-600
+              hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+          >
+            <i data-icon="text" class="size-3.5 text-slate-400"></i>
+            <span class="font-medium">${name}</span>
+          </div>
+        `;
+        const el = buildAndInterpolate(template, {});
+        if (el) fragment.appendChild(el);
+      });
+      return fragment;
+    }
+
+    countDescendantRows(node) {
+      if (!node) return 0;
+      let count = node.rows?.length ?? 0;
+      if (node.children) {
+        for (const child of node.children) {
+          count += this.countDescendantRows(child);
+        }
+      }
+      return count;
+    }
+  }
+
+  registerComponent('app-tree-viewer', TreeViewerComponent);
+
+}());

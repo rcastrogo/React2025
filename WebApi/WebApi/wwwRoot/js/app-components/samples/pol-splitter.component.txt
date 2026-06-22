@@ -1,0 +1,174 @@
+// PolSplitterComponent – panel dividido con redimensionamiento horizontal/vertical.
+(function () {
+
+  if (!VanillaReactive) {
+    console.error('VanillaReactive no está definido.');
+    return;
+  }
+
+  const { buildAndInterpolate, registerComponent } = VanillaReactive;
+  const { $ } = VanillaReactive.dom;
+  const { storage } = VanillaReactive.state;
+
+  const MIN_SIZE_PX = 80;
+  const BASE_BAR_CLASSES = 'shrink-0 select-none transition-colors hover:bg-blue-400 dark:hover:bg-blue-400';
+  const H_CLASSES = BASE_BAR_CLASSES + ' w-1.5 h-full cursor-col-resize border-l border-r border-slate-200 dark:border-slate-700';
+  const V_CLASSES = BASE_BAR_CLASSES + ' h-1.5 w-full cursor-row-resize border-t border-b border-slate-200 dark:border-slate-700';
+
+  function PolSplitterComponent() {
+
+    let root = null;
+    let leftPanel = null;
+    let storageKey = '';
+    let mode = 'horizontal';
+    let leftContent = null;
+    let rightContent = null;
+    let minSize = MIN_SIZE_PX;
+    let startX = 0;
+    let startY = 0;
+    let startWidth = 0;
+    let startHeight = 0;
+
+    return {
+
+      init(ctx) {
+        const props = ctx.parent?.dataset || {};
+        storageKey = props.key || '';
+        mode = props.mode === 'vertical' ? 'vertical' : 'horizontal';
+        minSize = Number(props.minSize) || MIN_SIZE_PX;
+        if (ctx.parent) {
+          leftContent = $('[data-slot-left]', ctx.parent).one();
+          rightContent = $('[data-slot-right]', ctx.parent).one();
+        }
+      },
+
+      destroy() {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      },
+
+      render() {
+        const isVertical = mode === 'vertical';
+        const barClass = isVertical ? V_CLASSES : H_CLASSES;
+        const template = `
+          <div class="flex w-full overflow-hidden ${isVertical ? 'flex-col' : 'flex-row'}">
+            <div data-splitter-left class="overflow-auto ${isVertical ? 'w-full' : 'w-2/5'}">
+              <slot name="left"></slot>
+            </div>
+            <div
+              data-splitter-bar
+              on-dblclick="onDblClick"
+              on-mousedown="onMouseDown"
+              class="${barClass}">
+            </div>
+            <div data-splitter-right class="flex-1 overflow-auto">
+              <slot name="right"></slot>
+            </div>
+          </div>
+        `;
+        root = buildAndInterpolate(
+          template,
+          {
+            onDblClick,
+            onMouseDown,
+            slottedNodes: {
+              right: [rightContent],
+              left: [leftContent],
+            },
+          }
+        );
+        return root;
+      },
+
+      mounted() {
+        leftPanel = $('[data-splitter-left]', root).one();
+        if (storageKey) restoreState();
+      },
+    };
+
+    function clamp(value, containerSize) {
+      const max = containerSize - minSize;
+      return Math.max(minSize, Math.min(value, max));
+    }
+
+    function saveState() {
+      if (!storageKey) return;
+      const size = mode === 'vertical' ? leftPanel.style.height : leftPanel.style.width;
+      storage.writeValue(`splitter-${storageKey}`, { mode, size });
+    }
+
+    function restoreState() {
+      const saved = storage.readValue(`splitter-${storageKey}`);
+      if (!saved) return;
+      const bar = $('[data-splitter-bar]', root).one();
+      if (saved.mode !== mode) {
+        mode = saved.mode;
+        if (mode === 'vertical') {
+          root.classList.replace('flex-row', 'flex-col');
+          leftPanel.style.width = '100%';
+          if (bar) bar.className = V_CLASSES;
+        } else {
+          root.classList.replace('flex-col', 'flex-row');
+          leftPanel.style.height = '';
+          if (bar) bar.className = H_CLASSES;
+        }
+      }
+      if (saved.size) {
+        if (mode === 'vertical') {
+          leftPanel.style.height = saved.size;
+        } else {
+          leftPanel.style.width = saved.size;
+        }
+      }
+    }
+
+    function onDblClick(bar) {
+      mode = mode === 'horizontal' ? 'vertical' : 'horizontal';
+      if (mode === 'vertical') {
+        root.classList.replace('flex-row', 'flex-col');
+        leftPanel.style.width = '100%';
+        leftPanel.style.height = '40%';
+        bar.className = V_CLASSES;
+      } else {
+        root.classList.replace('flex-col', 'flex-row');
+        leftPanel.style.height = '';
+        leftPanel.style.width = '40%';
+        bar.className = H_CLASSES;
+      }
+      saveState();
+    }
+
+    function onMouseMove(e) {
+      e.preventDefault();
+      if (mode === 'vertical') {
+        const containerHeight = root.clientHeight;
+        const newHeight = clamp(startHeight + (e.pageY - startY), containerHeight);
+        leftPanel.style.height = `${newHeight}px`;
+      } else {
+        const containerWidth = root.clientWidth;
+        const newWidth = clamp(startWidth + (e.pageX - startX), containerWidth);
+        leftPanel.style.width = `${newWidth}px`;
+      }
+    }
+
+    function onMouseUp() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      root.classList.remove('select-none');
+      saveState();
+    }
+
+    function onMouseDown(_el, e) {
+      startWidth = leftPanel.offsetWidth;
+      startHeight = leftPanel.offsetHeight;
+      startX = e.pageX;
+      startY = e.pageY;
+      root.classList.add('select-none');
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    }
+  }
+
+  registerComponent('app-pol-splitter', PolSplitterComponent);
+
+}());

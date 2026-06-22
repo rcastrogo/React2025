@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
@@ -49,5 +50,15 @@
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
+
+  <Target Name="NpmInstall" BeforeTargets="Build" Condition="!Exists('node_modules')">
+    <Message Importance="high" Text="Instalando dependencias de NPM..." />
+    <Exec Command="npm install" />
+  </Target>
+
+  <Target Name="TailwindBuild" BeforeTargets="Publish">
+    <Message Importance="high" Text="Compilando Tailwind CSS para Producción..." />
+    <Exec Command="npm run css:build" />
+  </Target>
   
 </Project>

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "checkJs": true,
+    "baseUrl": "."
+  },
+  "include": [
+    "wwwroot/js/**/*.js",
+    "wwwroot/js/types/**/*.d.ts",
+    "Pages/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "wwwroot/js/vanilla-reactive.iife.js"
+  ]
+}

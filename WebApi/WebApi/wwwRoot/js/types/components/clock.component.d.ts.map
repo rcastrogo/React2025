@@ -1,0 +1,1 @@
+{"version":3,"file":"clock.component.d.ts","sourceRoot":"","sources":["../../../src/core/components/clock.component.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,aAAa,EAAE,MAAM,UAAU,CAAC;AAEzC,qBAAa,cAAe,SAAQ,aAAa;IAE/C,OAAO,CAAC,MAAM,CAAsC;IAEpD,IAAI,IAAI,IAAI;IAQZ,MAAM,IAAI,WAAW;CA+BtB"}

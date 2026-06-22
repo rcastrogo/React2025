@@ -1,67 +1,93 @@
-@page
+﻿@page
 @model WebApi.Pages.DistribuidoresModel
 @{
-    ViewData["Title"] = "Distribuidores";
+  ViewData["Title"] = "Distribuidores";
 }
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 2rem; background: #f5f5f5; }
-        h1 { color: #333; }
-        table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
-        th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #0078d4; color: #fff; }
-        tr:hover { background: #f0f8ff; }
-        .badge-activo { background: #28a745; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: .85em; }
-        .badge-inactivo { background: #dc3545; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: .85em; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"]</title>
+
+  <link rel="stylesheet" href="css/tailwind.css">
+  <script src="js/icons.js"></script>
+  <script src="js/vanilla-reactive.iife.js"></script>
+  <script src="js/app-components-bundle.js"></script>
+  <script src="~/Pages/Distribuidores.cshtml.js"></script>
+
+
+  <style>
+  </style>
+
+  <script>
+
+  </script>
+
 </head>
-<body>
+<body class="min-h-screen bg-gray-100 transition-colors dark:bg-gray-900">
+  <div class="mx-auto max-w-4xl space-y-8 px-4">
+
+    <header class="">
+      <div data-component="header-component" class=""></div>
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">
+        <i data-icon="timer" class="inline-flex size-10"></i>
+        Counter Component
+      </h1>
+      <p class="mt-2 rounded border border-gray-200 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">
+        Página de ejemplo que muestra un contador simple implementado como componente usando una factory function.
+        El componente tiene un estado interno (count) y dos métodos para modificarlo (increment y decrement).
+        El valor del contador se muestra en pantalla y se actualiza automáticamente al hacer clic en los botones.
+      </p>
+      <div data-component="counter-component" class="my-2"></div>
+    </header>
+
+
     <h1>Lista de Distribuidores</h1>
     <p>Total: <strong>@Model.Distribuidores.Count</strong></p>
 
     <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>NIF</th>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Direcci�n</th>
-                <th>Ciudad</th>
-                <th>Tel�fono</th>
-                <th>Activo</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (dynamic item in Model.Distribuidores)
-            {
-                <tr>
-                    <td>@item.id</td>
-                    <td>@item.nif</td>
-                    <td>@item.nombre</td>
-                    <td>@item.email</td>
-                    <td>@item.direccion</td>
-                    <td>@item.ciudad</td>
-                    <td>@item.telefono</td>
-                    <td>
-                        @if ((int)item.activo == 1)
-                        {
-                            <span class="badge-activo">S�</span>
-                        }
-                        else
-                        {
-                            <span class="badge-inactivo">No</span>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
+      <thead class="">
+        <tr>
+          <th>Id</th>
+          <th>NIF</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Dirección</th>
+          <th>Ciudad</th>
+          <th>Teléfono</th>
+          <th>Activo</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (dynamic item in Model.Distribuidores)
+        {
+          <tr on-click="showDialog" id="@item.id">
+            <td>@item.id</td>
+            <td>@item.nif</td>
+            <td>@item.nombre</td>
+            <td>@item.email</td>
+            <td>@item.direccion</td>
+            <td>@item.ciudad</td>
+            <td>@item.telefono</td>
+            <td>
+              @if ((int)item.activo == 1)
+              {
+                <i data-icon="check" class="size-6"></i>
+              }
+              else
+              {
+                <i data-icon="minus" class="size-6"></i>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
     </table>
+
+    <div data-component="footer-component" class=""></div>
+
+  </div>
 </body>
 </html>

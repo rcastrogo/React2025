@@ -16,6 +16,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Negocio", "WebApi\Negocio\N
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ReactProject", "ReactProject\ReactProject.esproj", "{190BEE32-55D5-4986-9FD4-205519CBDF57}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{D107F4C8-89CC-BEA8-D3D7-CA6B7733353D}"
+	ProjectSection(SolutionItems) = preProject
+		WebApi\package-lock.json = WebApi\package-lock.json
+		WebApi\package.json = WebApi\package.json
+		WebApi\tailwind.config.js = WebApi\tailwind.config.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
