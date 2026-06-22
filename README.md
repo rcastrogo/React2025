@@ -2,6 +2,8 @@
 
 Proyecto de prueba de concepto SPA en React + TypeScript, con backend ASP.NET Core, varias formas de acceso a datos y distintas capas para trabajar con REST, Razor Pages y componentes reutilizables.
 
+https://webapivanillajs2026-axhxdzg8h5fub7hj.canadacentral-01.azurewebsites.net/Distribuidores
+
 ## Qué incluye el proyecto
 
 - **Frontend en React + Vite + TypeScript**
