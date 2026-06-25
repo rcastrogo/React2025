@@ -1,4 +1,4 @@
-
+using Api.Endpoints;
 using Dal.Core.Connections;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
@@ -104,6 +104,15 @@ app.MapGet("/version", async context => {
 // =========================================================================================
 app.UseMiddleware<HttpRequestMiddleware>();
 app.MapUsersEndpoins();
+app.MapSystemEndpoints();
+app.MapCategoriaEndpoints();
+app.MapDepartamentoEndpoints();
+app.MapEstadoPedidoEndpoints();
+app.MapMonedaEndpoints();
+app.MapPaisEndpoints();
+app.MapRolUsuarioEndpoints();
+app.MapTipoDeDocumentoEndpoints();
+app.MapTipoDeTransaccionEndpoints();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UsePolLogging();

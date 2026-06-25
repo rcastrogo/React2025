@@ -1,14 +1,14 @@
 ﻿
 /// <reference path="../wwwRoot/js/types/vanilla-reactive.d.ts" />
 
-const { 
-  registerComponent, 
-  hydrateElement, 
-  resolveBindingValue, 
-  buildAndInterpolate, 
-  pubSub, 
-  services, 
-  dom 
+const {
+  registerComponent,
+  hydrateElement,
+  resolveBindingValue,
+  buildAndInterpolate,
+  pubSub,
+  services,
+  dom
 } = VanillaReactive;
 
 // Componente counter usando factory function
@@ -16,7 +16,6 @@ const CounterComponent = function (ctx) {
   const self = {
     count: 0,
     bindings: [],
-
     // Función para decrementar el contador
     decrement() {
       self.count--;
@@ -35,7 +34,7 @@ const CounterComponent = function (ctx) {
     },
 
     // Inicialización del componente
-    init() {},
+    init() { },
 
     // Renderizado del componente
     render() {
@@ -64,10 +63,10 @@ const CounterComponent = function (ctx) {
     },
 
     // Se monta el componente
-    mounted() {},
+    mounted() { },
 
     // Se destruye el componente
-    destroy() {}
+    destroy() { }
   };
 
   return self;
@@ -78,9 +77,24 @@ VanillaReactive.initApp([
   () => {
     registerComponent('counter-component', CounterComponent);
     hydrateElement(document.body, {
-      showDialog : (el, ev) => {
+      updateBindings: function () {
+        this.bindings.forEach(b => resolveBindingValue(b, this));
+      },
+      apiResult: '',
+      showDialog: (el, ev) => {
         alert(el.id);
-      }
+      },
+      getEndpoints: async function () {
+        const req = services.RQ.create();
+        const res = await req.getFrom('/api/system/routes').invoke();
+        if (typeof res === 'string') {
+          console.error(res);
+        } else {
+          this.apiResult = JSON.stringify(res.data, null, 2);
+          this.updateBindings();
+          console.log(res.data);
+        }
+      },
     });
   }
 ]);

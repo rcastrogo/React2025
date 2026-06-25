@@ -41,8 +41,12 @@
         El valor del contador se muestra en pantalla y se actualiza automáticamente al hacer clic en los botones.
       </p>
       <div data-component="counter-component" class="my-2"></div>
+      <button class="w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" on-click="getEndpoints">
+        Consultar API
+      </button>
     </header>
 
+    <pre id="api-result" data-bind="text:apiResult" class="h-60 overflow-y-auto bg-gray-300"></pre>
 
     <h1>Lista de Distribuidores</h1>
     <p>Total: <strong>@Model.Distribuidores.Count</strong></p>
@@ -85,7 +89,7 @@
         }
       </tbody>
     </table>
-
+   
     <div data-component="footer-component" class=""></div>
 
   </div>
