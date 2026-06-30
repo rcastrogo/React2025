@@ -8,7 +8,8 @@ const {
   buildAndInterpolate,
   pubSub,
   services,
-  dom
+  dom,
+  state,
 } = VanillaReactive;
 
 // Componente counter usando factory function
@@ -72,29 +73,71 @@ const CounterComponent = function (ctx) {
   return self;
 };
 
+
+
+
+// ==============================================================================
+// Contexto de la aplicación
+// ==============================================================================
+const appContext = (function() {
+
+  const {store, put, on, effect} = state.useState({
+    inputValue: '',
+    isDirty: false,
+    length: 0,
+  });
+
+  function handleInput(el) {
+    put('inputValue', el.value);
+    if(el.value.trim() !== '') {
+      put('isDirty', true);
+      put('length', el.value.length);
+    } else {
+      put('isDirty', false);
+      put('length', 0);
+    }
+  }
+
+  on('inputValue', (value) => {
+    console.log('on("inputValue")', value);
+    pubSub.publish('INFO_MESSAGE_UPDATED', `Current input value: ${value}`);
+  });
+
+  effect(() => console.log('1 Effect without dependencies triggered'));
+  effect(() => console.log('Effect triggered for [inputValue, isDirty]'), ['inputValue', 'isDirty']);
+  effect(() => console.log('Effect triggered for isDirty'), ['isDirty']);
+  effect(() => console.log('Effect triggered always'), []);
+
+  return {
+    updateBindings: function () {
+      this.bindings.forEach(b => resolveBindingValue(b, this));
+    },
+    apiResult: '',
+    showDialog: (el, ev) => {
+      alert(el.id);
+    },
+    getEndpoints: async function () {
+      const req = services.RQ.create();
+      const res = await req.getFrom('/api/system/routes').invoke();
+      if (typeof res === 'string') {
+        console.error(res);
+      } else {
+        this.apiResult = JSON.stringify(res.data, null, 2);
+        this.updateBindings();
+        console.log(res.data);
+      }
+    },
+    handleInput, 
+    on, 
+    store
+  };
+}());
+
+
 // Inicializa la aplicación
 VanillaReactive.initApp([
   () => {
     registerComponent('counter-component', CounterComponent);
-    hydrateElement(document.body, {
-      updateBindings: function () {
-        this.bindings.forEach(b => resolveBindingValue(b, this));
-      },
-      apiResult: '',
-      showDialog: (el, ev) => {
-        alert(el.id);
-      },
-      getEndpoints: async function () {
-        const req = services.RQ.create();
-        const res = await req.getFrom('/api/system/routes').invoke();
-        if (typeof res === 'string') {
-          console.error(res);
-        } else {
-          this.apiResult = JSON.stringify(res.data, null, 2);
-          this.updateBindings();
-          console.log(res.data);
-        }
-      },
-    });
+    hydrateElement(document.body, appContext );
   }
 ]);

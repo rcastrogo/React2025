@@ -48,6 +48,20 @@
 
     <pre id="api-result" data-bind="text:apiResult" class="h-60 overflow-y-auto bg-gray-300"></pre>
 
+    <input type="text"
+           class="app-input mb-4"
+           placeholder="Type something here..."
+           on-input="handleInput" />
+    <div class="mb-4">
+      <div class="border p-2 text-center font-semibold" on-state="toggle.hidden:isDirty">Sin cambios</div>
+      <div class="hidden border p-2 text-center font-semibold" on-state="toggle.hidden:isDirty|not;text:inputValue"></div>
+      <input type="range" class="w-full" min="0" max="100" on-state="value:length" />
+      <input type="text" class="w-full p-2 text-center" on-state="value:length" /> 
+    </div>
+    <div class="mb-4">
+      <div class="border p-2 text-center font-semibold" on-publish="INFO_MESSAGE_UPDATED:local:html"></div>
+    </div>
+
     <h1>Lista de Distribuidores</h1>
     <p>Total: <strong>@Model.Distribuidores.Count</strong></p>
 

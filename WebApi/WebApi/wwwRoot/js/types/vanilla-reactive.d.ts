@@ -198,7 +198,12 @@ declare const VanillaReactive: {
     createIcon(name: string, customClass?: string): SVGElement | string | undefined;
   };
   state: {
-    useState<T extends object>(initial: T): { store: T; put: <K extends keyof T>(prop: K, value: T[K]) => void; on: <K extends keyof T>(prop: K, callback: (value: T[K]) => void) => () => void };
+    useState<T extends object>(initial: T): { 
+      store: T; 
+      put: <K extends keyof T>(prop: K, value: T[K]) => void; 
+      on: <K extends keyof T>(prop: K, callback: (value: T[K]) => void) => () => void; 
+      effect: (callback: () => void, deps?: (keyof T)[]) => (() => void) | void;
+    };
     storage: StorageUtil;
   };
   services: {
